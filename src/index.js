@@ -14,6 +14,7 @@ import { isOutsideClick, clientIdGenerator } from './utils'
 import Input from './input'
 import Trigger from './trigger'
 import Tree from './tree'
+import Tags from './tags'
 import TreeManager from './tree-manager'
 import keyboardNavigation from './tree-manager/keyboardNavigation'
 
@@ -25,6 +26,7 @@ const cx = cn.bind(styles)
 class DropdownTreeSelect extends Component {
   static propTypes = {
     data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
+    customOptions: PropTypes.array,
     clearSearchOnChange: PropTypes.bool,
     keepTreeOnSearch: PropTypes.bool,
     keepChildrenOnSearch: PropTypes.bool,
@@ -67,7 +69,7 @@ class DropdownTreeSelect extends Component {
     this.clientId = props.id || clientIdGenerator.get(this)
   }
 
-  initNewProps = ({ data, mode, showDropdown, showPartiallySelected, searchPredicate }) => {
+  initNewProps = ({ data, customOptions, mode, showDropdown, showPartiallySelected, searchPredicate }) => {
     this.treeManager = new TreeManager({
       data,
       mode,
@@ -82,8 +84,13 @@ class DropdownTreeSelect extends Component {
     }
     this.setState(prevState => ({
       showDropdown: /initial|always/.test(showDropdown) || prevState.showDropdown === true,
+      customOptions: this.initCustomOptions(customOptions),
       ...this.treeManager.getTreeAndTags(),
     }))
+  }
+
+  initCustomOptions = customOptions => {
+    return customOptions.map((option, i) => ({ label: option, id: i }))
   }
 
   resetSearchState = () => {
@@ -159,6 +166,12 @@ class DropdownTreeSelect extends Component {
 
       keyboardNavigation.getNextFocusAfterTagDelete(id, prevTags, tags, this.searchInput).focus()
     })
+  }
+
+  onCustomOptionRemove = id => {
+    this.setState(prevState => ({
+      customOptions: prevState.customOptions.filter((option, i) => option.id !== id),
+    }))
   }
 
   onNodeToggle = id => {
@@ -277,7 +290,7 @@ class DropdownTreeSelect extends Component {
 
   render() {
     const { disabled, readOnly, mode, texts } = this.props
-    const { showDropdown, currentFocus, tags } = this.state
+    const { showDropdown, currentFocus, tags, customOptions } = this.state
 
     const activeDescendant = currentFocus ? `${currentFocus}_li` : undefined
 
@@ -307,7 +320,6 @@ class DropdownTreeSelect extends Component {
               onInputChange={this.onInputChange}
               onFocus={this.onInputFocus}
               onBlur={this.onInputBlur}
-              onTagRemove={this.onTagRemove}
               onKeyDown={this.onKeyboardKeyDown}
               {...commonProps}
             />
@@ -327,12 +339,15 @@ class DropdownTreeSelect extends Component {
                   onNodeToggle={this.onNodeToggle}
                   mode={mode}
                   showPartiallySelected={this.props.showPartiallySelected}
+                  customOptions={customOptions}
+                  onCustomOptionRemove={this.onCustomOptionRemove}
                   {...commonProps}
                 />
               )}
             </div>
           )}
         </div>
+        <Tags tags={tags} onTagRemove={this.onTagRemove} {...commonProps} />
       </div>
     )
   }

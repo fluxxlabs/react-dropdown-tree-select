@@ -1,6 +1,7 @@
 import InfiniteScroll from 'react-infinite-scroll-component'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
+import CustomOptions from '../custom-options'
 
 import TreeNode from '../tree-node'
 
@@ -29,6 +30,7 @@ class Tree extends Component {
     readOnly: PropTypes.bool,
     clientId: PropTypes.string,
     activeDescendant: PropTypes.string,
+    onCustomOptionRemove: PropTypes.func,
   }
 
   static defaultProps = {
@@ -142,10 +144,11 @@ class Tree extends Component {
   }
 
   render() {
-    const { searchModeOn } = this.props
+    const { searchModeOn, customOptions, onCustomOptionRemove } = this.props
 
     return (
       <ul className={`root ${searchModeOn ? 'searchModeOn' : ''}`} ref={this.setNodeRef} {...this.getAriaAttributes()}>
+        <CustomOptions customOptions={customOptions} onCustomOptionRemove={onCustomOptionRemove} />
         {this.state.scrollableTarget && (
           <InfiniteScroll
             dataLength={this.state.items.length}
