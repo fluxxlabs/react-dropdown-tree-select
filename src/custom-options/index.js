@@ -8,29 +8,10 @@ class CustomOptions extends PureComponent {
     return (
       <div className="custom-options">
         <ul>
-          {customOptions.map(option => {
+          {customOptions.map((option, i) => {
             return (
-              <CustomOption
-                option={option}
-                onCustomOptionRemove={onCustomOptionRemove}
-                key={`custom-option-${option.id}`}
-              />
+              <CustomOption option={option} onCustomOptionRemove={onCustomOptionRemove} key={`custom-option-${i}`} />
             )
-            // return (
-            //   <li className="custom-option" key={`custom-option-${i}`}>
-            //     {label}
-            //     {id}
-            //     <button
-            //       id={`clear-option-${id}`}
-            //       className="clear-custom-option-btn"
-            //       type="button"
-            //       aria-label="clear option"
-            //       onClick={this.handleClick}
-            //     >
-            //       x
-            //     </button>
-            //   </li>
-            // )
           })}
         </ul>
       </div>

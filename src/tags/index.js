@@ -3,13 +3,17 @@ import PropTypes from 'prop-types'
 import Tag from '../tag'
 import { getDataset } from '../utils'
 
-const getTags = (tags = [], onDelete, readOnly, disabled, labelRemove) =>
-  tags.map(tag => {
-    const { _id, label, dataset } = tag
+const getTags = (tags = [], onDelete, readOnly, disabled, labelRemove, treeManager) => {
+  return tags.map(tag => {
+    const { _id, label, dataset, _parent } = tag
+    const parent = _parent ? treeManager.getNodeById(_parent) : null
+    const parentLabel = parent ? parent.label : null
+
     return (
       <li className="tag-item" key={`tag-item-${_id}`} {...getDataset(dataset)}>
         <Tag
           label={label}
+          parentLabel={parentLabel}
           id={_id}
           onDelete={onDelete}
           readOnly={readOnly}
@@ -19,6 +23,7 @@ const getTags = (tags = [], onDelete, readOnly, disabled, labelRemove) =>
       </li>
     )
   })
+}
 
 class Tags extends PureComponent {
   static propTypes = {
@@ -30,9 +35,11 @@ class Tags extends PureComponent {
   }
 
   render() {
-    const { tags, onTagRemove, texts = {}, disabled, readOnly } = this.props
+    const { tags, onTagRemove, texts = {}, disabled, readOnly, treeManager } = this.props
 
-    return <div className="tag-list">{getTags(tags, onTagRemove, readOnly, disabled, texts.labelRemove)}</div>
+    return (
+      <div className="tag-list">{getTags(tags, onTagRemove, readOnly, disabled, texts.labelRemove, treeManager)}</div>
+    )
   }
 }
 

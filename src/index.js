@@ -15,6 +15,8 @@ import Input from './input'
 import Trigger from './trigger'
 import Tree from './tree'
 import Tags from './tags'
+import CustomOptions from './custom-options'
+import CreateCustomOption from './create-custom-option'
 import TreeManager from './tree-manager'
 import keyboardNavigation from './tree-manager/keyboardNavigation'
 
@@ -50,6 +52,7 @@ class DropdownTreeSelect extends Component {
     readOnly: PropTypes.bool,
     id: PropTypes.string,
     searchPredicate: PropTypes.func,
+    onCustomOptionChange: PropTypes.func,
   }
 
   static defaultProps = {
@@ -65,8 +68,11 @@ class DropdownTreeSelect extends Component {
     this.state = {
       searchModeOn: false,
       currentFocus: undefined,
+      searchTerm: null,
     }
     this.clientId = props.id || clientIdGenerator.get(this)
+    this.onCustomOptionRemove = this.onCustomOptionRemove.bind(this)
+    this.onCustomOptionCreate = this.onCustomOptionCreate.bind(this)
   }
 
   initNewProps = ({ data, customOptions, mode, showDropdown, showPartiallySelected, searchPredicate }) => {
@@ -84,13 +90,9 @@ class DropdownTreeSelect extends Component {
     }
     this.setState(prevState => ({
       showDropdown: /initial|always/.test(showDropdown) || prevState.showDropdown === true,
-      customOptions: this.initCustomOptions(customOptions),
+      customOptions,
       ...this.treeManager.getTreeAndTags(),
     }))
-  }
-
-  initCustomOptions = customOptions => {
-    return customOptions.map((option, i) => ({ label: option, id: i }))
   }
 
   resetSearchState = () => {
@@ -156,6 +158,7 @@ class DropdownTreeSelect extends Component {
       tree,
       searchModeOn,
       allNodesHidden,
+      searchTerm: value,
     })
   }
 
@@ -168,10 +171,21 @@ class DropdownTreeSelect extends Component {
     })
   }
 
-  onCustomOptionRemove = id => {
-    this.setState(prevState => ({
-      customOptions: prevState.customOptions.filter((option, i) => option.id !== id),
-    }))
+  onCustomOptionRemove = value => {
+    const { customOptions } = this.state
+    const newOptions = customOptions.filter((option, i) => option !== value)
+    this.setState({ customOptions: newOptions }, this.onCustomChangeCallback(newOptions))
+  }
+
+  onCustomOptionCreate = value => {
+    const { customOptions } = this.state
+    const newOptions = [...customOptions, value]
+    this.setState({ customOptions: newOptions, ...this.resetSearchState() }, this.onCustomChangeCallback(newOptions))
+  }
+
+  onCustomChangeCallback = newOptions => {
+    const { onCustomOptionChange } = this.props
+    onCustomOptionChange(newOptions)
   }
 
   onNodeToggle = id => {
@@ -290,7 +304,7 @@ class DropdownTreeSelect extends Component {
 
   render() {
     const { disabled, readOnly, mode, texts } = this.props
-    const { showDropdown, currentFocus, tags, customOptions } = this.state
+    const { showDropdown, currentFocus, tags, customOptions, searchModeOn, searchTerm } = this.state
 
     const activeDescendant = currentFocus ? `${currentFocus}_li` : undefined
 
@@ -311,6 +325,8 @@ class DropdownTreeSelect extends Component {
             { 'radio-select': mode === 'radioSelect' }
           )}
         >
+          <Tags tags={tags} onTagRemove={this.onTagRemove} treeManager={this.treeManager} {...commonProps} />
+          <CustomOptions customOptions={customOptions} onCustomOptionRemove={this.onCustomOptionRemove} />
           <Trigger onTrigger={this.onTrigger} showDropdown={showDropdown} {...commonProps} tags={tags}>
             <Input
               inputRef={el => {
@@ -324,6 +340,9 @@ class DropdownTreeSelect extends Component {
               {...commonProps}
             />
           </Trigger>
+          {searchModeOn && (
+            <CreateCustomOption searchTerm={searchTerm} onCustomOptionCreate={this.onCustomOptionCreate} />
+          )}
           {showDropdown && (
             <div className="dropdown-content" {...this.getAriaAttributes()}>
               {this.state.allNodesHidden ? (
@@ -341,13 +360,13 @@ class DropdownTreeSelect extends Component {
                   showPartiallySelected={this.props.showPartiallySelected}
                   customOptions={customOptions}
                   onCustomOptionRemove={this.onCustomOptionRemove}
+                  onCustomOptionCreate={this.onCustomOptionCreate}
                   {...commonProps}
                 />
               )}
             </div>
           )}
         </div>
-        <Tags tags={tags} onTagRemove={this.onTagRemove} {...commonProps} />
       </div>
     )
   }

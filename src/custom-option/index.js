@@ -7,32 +7,19 @@ class CustomOption extends PureComponent {
   }
 
   handleClick = e => {
-    const {
-      option: { label, id },
-      onCustomOptionRemove,
-    } = this.props
-    // const { id, removeCustomOption } = this.props
+    const { option, onCustomOptionRemove } = this.props
     e.stopPropagation()
-    console.log('remove:', label, id)
-    onCustomOptionRemove(id)
+    onCustomOptionRemove(option)
   }
 
   render() {
-    const {
-      option: { label, id },
-    } = this.props
+    const { option } = this.props
 
     return (
-      <li className="custom-option" key={`custom-option-${id}`}>
-        {label}
-        <button
-          id={`clear-option-${id}`}
-          className="clear-custom-option-btn"
-          type="button"
-          aria-label="clear option"
-          onClick={this.handleClick}
-        >
-          x
+      <li className="custom-option tag-item">
+        "{option}"
+        <button className="clear-custom-option-btn" type="button" aria-label="clear option" onClick={this.handleClick}>
+          &#10005;
         </button>
       </li>
     )
