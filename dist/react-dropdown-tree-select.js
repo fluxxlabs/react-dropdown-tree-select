@@ -3071,7 +3071,8 @@
                     d = s.customOptions,
                     f = s.searchModeOn,
                     y = s.searchTerm,
-                    b = {
+                    b = i && f,
+                    g = {
                       disabled: n,
                       readOnly: r,
                       activeDescendant: u ? u + '_li' : void 0,
@@ -3104,7 +3105,7 @@
                           Ie,
                           bt(
                             { tags: h, onTagUpdate: l, onTagRemove: this.onTagRemove, treeManager: this.treeManager },
-                            b
+                            g
                           )
                         ),
                         i &&
@@ -3118,7 +3119,7 @@
                           { className: 'search-with-options' },
                           p.a.createElement(
                             V,
-                            bt({ onTrigger: this.onTrigger, showDropdown: c }, b, { tags: h }),
+                            bt({ onTrigger: this.onTrigger, showDropdown: c }, g, { tags: h }),
                             p.a.createElement(
                               C,
                               bt(
@@ -3134,11 +3135,11 @@
                                   clearSearch: this.clearSearch,
                                   searchModeOn: f,
                                 },
-                                b
+                                g
                               )
                             )
                           ),
-                          f && p.a.createElement(Ye, { searchTerm: y, onCustomOptionCreate: this.onCustomOptionCreate })
+                          b && p.a.createElement(Ye, { searchTerm: y, onCustomOptionCreate: this.onCustomOptionCreate })
                         ),
                         c &&
                           p.a.createElement(
@@ -3167,7 +3168,7 @@
                                       onCustomOptionRemove: this.onCustomOptionRemove,
                                       onCustomOptionCreate: this.onCustomOptionCreate,
                                     },
-                                    b
+                                    g
                                   )
                                 )
                           )
