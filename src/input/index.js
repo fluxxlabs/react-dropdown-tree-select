@@ -31,7 +31,18 @@ class Input extends PureComponent {
   }
 
   render() {
-    const { inputRef, texts = {}, onFocus, onBlur, disabled, readOnly, onKeyDown, activeDescendant } = this.props
+    const {
+      inputRef,
+      texts = {},
+      onFocus,
+      onBlur,
+      disabled,
+      readOnly,
+      onKeyDown,
+      activeDescendant,
+      clearSearch,
+      searchModeOn,
+    } = this.props
 
     return (
       <div className="search-input">
@@ -50,6 +61,17 @@ class Input extends PureComponent {
           aria-autocomplete={onKeyDown ? 'list' : undefined}
           {...getAriaLabel(texts.label)}
         />
+        {searchModeOn && (
+          <button
+            id="clear-search"
+            onClick={clearSearch}
+            className="clear-search-btn"
+            type="button"
+            aria-label="clear-search-button"
+          >
+            &#10005;
+          </button>
+        )}
       </div>
     )
   }

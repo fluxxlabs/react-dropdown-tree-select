@@ -3,11 +3,20 @@ import PropTypes from 'prop-types'
 import Tag from '../tag'
 import { getDataset } from '../utils'
 
-const getTags = (tags = [], onDelete, readOnly, disabled, labelRemove, treeManager) => {
-  return tags.map(tag => {
-    const { _id, label, dataset, _parent } = tag
+const prepareTagData = (tagData, treeManager) => {
+  return tagData.map(tag => {
+    const { _parent } = tag
     const parent = _parent ? treeManager.getNodeById(_parent) : null
-    const parentLabel = parent ? parent.label : null
+    tag.parentLabel = parent ? parent.label : null
+    return tag
+  })
+}
+
+const getTags = (tags = [], onDelete, readOnly, disabled, labelRemove, treeManager) => {
+  const tagData = prepareTagData(tags, treeManager)
+
+  return tagData.map(tag => {
+    const { _id, label, dataset, parentLabel } = tag
 
     return (
       <li className="tag-item" key={`tag-item-${_id}`} {...getDataset(dataset)}>

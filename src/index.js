@@ -28,6 +28,7 @@ const cx = cn.bind(styles)
 class DropdownTreeSelect extends Component {
   static propTypes = {
     data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
+    allowCustomOptions: PropTypes.bool,
     customOptions: PropTypes.array,
     clearSearchOnChange: PropTypes.bool,
     keepTreeOnSearch: PropTypes.bool,
@@ -53,6 +54,7 @@ class DropdownTreeSelect extends Component {
     id: PropTypes.string,
     searchPredicate: PropTypes.func,
     onCustomOptionChange: PropTypes.func,
+    onTagUpdate: PropTypes.func,
   }
 
   static defaultProps = {
@@ -73,6 +75,7 @@ class DropdownTreeSelect extends Component {
     this.clientId = props.id || clientIdGenerator.get(this)
     this.onCustomOptionRemove = this.onCustomOptionRemove.bind(this)
     this.onCustomOptionCreate = this.onCustomOptionCreate.bind(this)
+    this.clearSearch = this.clearSearch.bind(this)
   }
 
   initNewProps = ({ data, customOptions, mode, showDropdown, showPartiallySelected, searchPredicate }) => {
@@ -179,13 +182,27 @@ class DropdownTreeSelect extends Component {
 
   onCustomOptionCreate = value => {
     const { customOptions } = this.state
-    const newOptions = [...customOptions, value]
+    const options = customOptions || []
+    const newOptions = [...options, value]
     this.setState({ customOptions: newOptions, ...this.resetSearchState() }, this.onCustomChangeCallback(newOptions))
   }
 
   onCustomChangeCallback = newOptions => {
     const { onCustomOptionChange } = this.props
     onCustomOptionChange(newOptions)
+  }
+
+  clearSearch = () => {
+    this.setState({ ...this.resetSearchState() })
+  }
+
+  prepareTagData = (tagData, treeManager) => {
+    return tagData.map(tag => {
+      const { _parent } = tag
+      const parent = _parent ? treeManager.getNodeById(_parent) : null
+      tag.parentLabel = parent ? parent.label : null
+      return tag
+    })
   }
 
   onNodeToggle = id => {
@@ -225,7 +242,9 @@ class DropdownTreeSelect extends Component {
     this.setState(nextState, () => {
       callback && callback(tags)
     })
-    this.props.onChange(this.treeManager.getNodeById(id), tags)
+    const preparedTags = this.prepareTagData(tags, this.treeManager)
+
+    this.props.onChange(this.treeManager.getNodeById(id), tags, preparedTags)
   }
 
   onAction = (nodeId, action) => {
@@ -303,7 +322,7 @@ class DropdownTreeSelect extends Component {
   }
 
   render() {
-    const { disabled, readOnly, mode, texts } = this.props
+    const { disabled, readOnly, mode, texts, allowCustomOptions, onTagUpdate } = this.props
     const { showDropdown, currentFocus, tags, customOptions, searchModeOn, searchTerm } = this.state
 
     const activeDescendant = currentFocus ? `${currentFocus}_li` : undefined
@@ -325,47 +344,63 @@ class DropdownTreeSelect extends Component {
             { 'radio-select': mode === 'radioSelect' }
           )}
         >
-          <Tags tags={tags} onTagRemove={this.onTagRemove} treeManager={this.treeManager} {...commonProps} />
-          <CustomOptions customOptions={customOptions} onCustomOptionRemove={this.onCustomOptionRemove} />
-          <Trigger onTrigger={this.onTrigger} showDropdown={showDropdown} {...commonProps} tags={tags}>
-            <Input
-              inputRef={el => {
-                this.searchInput = el
-              }}
+          <div className="tag-container">
+            <Tags
               tags={tags}
-              onInputChange={this.onInputChange}
-              onFocus={this.onInputFocus}
-              onBlur={this.onInputBlur}
-              onKeyDown={this.onKeyboardKeyDown}
+              onTagUpdate={onTagUpdate}
+              onTagRemove={this.onTagRemove}
+              treeManager={this.treeManager}
               {...commonProps}
             />
-          </Trigger>
-          {searchModeOn && (
-            <CreateCustomOption searchTerm={searchTerm} onCustomOptionCreate={this.onCustomOptionCreate} />
-          )}
-          {showDropdown && (
-            <div className="dropdown-content" {...this.getAriaAttributes()}>
-              {this.state.allNodesHidden ? (
-                <span className="no-matches">{texts.noMatches || 'No matches found'}</span>
-              ) : (
-                <Tree
-                  data={this.state.tree}
-                  keepTreeOnSearch={this.props.keepTreeOnSearch}
-                  keepChildrenOnSearch={this.props.keepChildrenOnSearch}
-                  searchModeOn={this.state.searchModeOn}
-                  onAction={this.onAction}
-                  onCheckboxChange={this.onCheckboxChange}
-                  onNodeToggle={this.onNodeToggle}
-                  mode={mode}
-                  showPartiallySelected={this.props.showPartiallySelected}
-                  customOptions={customOptions}
-                  onCustomOptionRemove={this.onCustomOptionRemove}
-                  onCustomOptionCreate={this.onCustomOptionCreate}
+            {allowCustomOptions && (
+              <CustomOptions customOptions={customOptions} onCustomOptionRemove={this.onCustomOptionRemove} />
+            )}
+          </div>
+          <div className="bulk-select-body">
+            <div className="search-with-options">
+              <Trigger onTrigger={this.onTrigger} showDropdown={showDropdown} {...commonProps} tags={tags}>
+                <Input
+                  inputRef={el => {
+                    this.searchInput = el
+                  }}
+                  tags={tags}
+                  onInputChange={this.onInputChange}
+                  onFocus={this.onInputFocus}
+                  onBlur={this.onInputBlur}
+                  onKeyDown={this.onKeyboardKeyDown}
+                  clearSearch={this.clearSearch}
+                  searchModeOn={searchModeOn}
                   {...commonProps}
                 />
+              </Trigger>
+              {searchModeOn && (
+                <CreateCustomOption searchTerm={searchTerm} onCustomOptionCreate={this.onCustomOptionCreate} />
               )}
             </div>
-          )}
+            {showDropdown && (
+              <div className="dropdown-content" {...this.getAriaAttributes()}>
+                {this.state.allNodesHidden ? (
+                  <span className="no-matches">{texts.noMatches || 'No matches found'}</span>
+                ) : (
+                  <Tree
+                    data={this.state.tree}
+                    keepTreeOnSearch={this.props.keepTreeOnSearch}
+                    keepChildrenOnSearch={this.props.keepChildrenOnSearch}
+                    searchModeOn={this.state.searchModeOn}
+                    onAction={this.onAction}
+                    onCheckboxChange={this.onCheckboxChange}
+                    onNodeToggle={this.onNodeToggle}
+                    mode={mode}
+                    showPartiallySelected={this.props.showPartiallySelected}
+                    customOptions={customOptions}
+                    onCustomOptionRemove={this.onCustomOptionRemove}
+                    onCustomOptionCreate={this.onCustomOptionCreate}
+                    {...commonProps}
+                  />
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     )

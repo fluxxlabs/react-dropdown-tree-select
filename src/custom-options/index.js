@@ -4,6 +4,7 @@ import CustomOption from '../custom-option'
 class CustomOptions extends PureComponent {
   render() {
     const { customOptions, onCustomOptionRemove } = this.props
+    if (!customOptions) return null
 
     return (
       <div className="custom-options">
