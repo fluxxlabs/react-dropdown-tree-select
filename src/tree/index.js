@@ -142,10 +142,12 @@ class Tree extends Component {
   }
 
   render() {
-    const { searchModeOn } = this.props
+    const { searchModeOn, texts = {} } = this.props
+    const subHeader = texts.treeSubheader || null
 
     return (
       <ul className={`root ${searchModeOn ? 'searchModeOn' : ''}`} ref={this.setNodeRef} {...this.getAriaAttributes()}>
+        {subHeader && <h2 className="tree-subheader">{subHeader}</h2>}
         {this.state.scrollableTarget && (
           <InfiniteScroll
             dataLength={this.state.items.length}

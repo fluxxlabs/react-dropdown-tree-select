@@ -12,6 +12,7 @@ class Tag extends PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
+    parentLabel: PropTypes.string,
     onDelete: PropTypes.func,
     readOnly: PropTypes.bool,
     disabled: PropTypes.bool,
@@ -40,16 +41,17 @@ class Tag extends PureComponent {
   }
 
   render() {
-    const { id, label, labelRemove = 'Remove', readOnly, disabled } = this.props
+    const { id, label, labelRemove = 'Remove', readOnly, disabled, parentLabel } = this.props
 
     const tagId = getTagId(id)
     const buttonId = `${id}_button`
     const className = cx('tag-remove', { readOnly }, { disabled })
     const isDisabled = readOnly || disabled
+    const text = parentLabel ? `${label} (${parentLabel})` : label
 
     return (
       <span className={cx('tag')} id={tagId} aria-label={label}>
-        {label}
+        {text}
         <button
           id={buttonId}
           onClick={!isDisabled ? this.handleClick : undefined}
@@ -61,7 +63,7 @@ class Tag extends PureComponent {
           aria-labelledby={`${buttonId} ${tagId}`}
           aria-disabled={isDisabled}
         >
-          x
+          &#10005;
         </button>
       </span>
     )

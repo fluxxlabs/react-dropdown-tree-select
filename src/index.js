@@ -14,6 +14,9 @@ import { isOutsideClick, clientIdGenerator } from './utils'
 import Input from './input'
 import Trigger from './trigger'
 import Tree from './tree'
+import Tags from './tags'
+import CustomOptions from './custom-options'
+import CreateCustomOption from './create-custom-option'
 import TreeManager from './tree-manager'
 import keyboardNavigation from './tree-manager/keyboardNavigation'
 
@@ -25,6 +28,8 @@ const cx = cn.bind(styles)
 class DropdownTreeSelect extends Component {
   static propTypes = {
     data: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
+    allowCustomOptions: PropTypes.bool,
+    customOptions: PropTypes.array,
     clearSearchOnChange: PropTypes.bool,
     keepTreeOnSearch: PropTypes.bool,
     keepChildrenOnSearch: PropTypes.bool,
@@ -48,6 +53,8 @@ class DropdownTreeSelect extends Component {
     readOnly: PropTypes.bool,
     id: PropTypes.string,
     searchPredicate: PropTypes.func,
+    onCustomOptionChange: PropTypes.func,
+    onTagUpdate: PropTypes.func,
   }
 
   static defaultProps = {
@@ -63,11 +70,15 @@ class DropdownTreeSelect extends Component {
     this.state = {
       searchModeOn: false,
       currentFocus: undefined,
+      searchTerm: null,
     }
     this.clientId = props.id || clientIdGenerator.get(this)
+    this.onCustomOptionRemove = this.onCustomOptionRemove.bind(this)
+    this.onCustomOptionCreate = this.onCustomOptionCreate.bind(this)
+    this.clearSearch = this.clearSearch.bind(this)
   }
 
-  initNewProps = ({ data, mode, showDropdown, showPartiallySelected, searchPredicate }) => {
+  initNewProps = ({ data, customOptions, mode, showDropdown, showPartiallySelected, searchPredicate }) => {
     this.treeManager = new TreeManager({
       data,
       mode,
@@ -82,6 +93,7 @@ class DropdownTreeSelect extends Component {
     }
     this.setState(prevState => ({
       showDropdown: /initial|always/.test(showDropdown) || prevState.showDropdown === true,
+      customOptions,
       ...this.treeManager.getTreeAndTags(),
     }))
   }
@@ -149,6 +161,7 @@ class DropdownTreeSelect extends Component {
       tree,
       searchModeOn,
       allNodesHidden,
+      searchTerm: value,
     })
   }
 
@@ -158,6 +171,37 @@ class DropdownTreeSelect extends Component {
       if (!isKeyboardEvent) return
 
       keyboardNavigation.getNextFocusAfterTagDelete(id, prevTags, tags, this.searchInput).focus()
+    })
+  }
+
+  onCustomOptionRemove = value => {
+    const { customOptions } = this.state
+    const newOptions = customOptions.filter((option, i) => option !== value)
+    this.setState({ customOptions: newOptions }, this.onCustomChangeCallback(newOptions))
+  }
+
+  onCustomOptionCreate = value => {
+    const { customOptions } = this.state
+    const options = customOptions || []
+    const newOptions = [...options, value]
+    this.setState({ customOptions: newOptions, ...this.resetSearchState() }, this.onCustomChangeCallback(newOptions))
+  }
+
+  onCustomChangeCallback = newOptions => {
+    const { onCustomOptionChange } = this.props
+    onCustomOptionChange(newOptions)
+  }
+
+  clearSearch = () => {
+    this.setState({ ...this.resetSearchState() })
+  }
+
+  prepareTagData = (tagData, treeManager) => {
+    return tagData.map(tag => {
+      const { _parent } = tag
+      const parent = _parent ? treeManager.getNodeById(_parent) : null
+      tag.parentLabel = parent ? parent.label : null
+      return tag
     })
   }
 
@@ -198,7 +242,9 @@ class DropdownTreeSelect extends Component {
     this.setState(nextState, () => {
       callback && callback(tags)
     })
-    this.props.onChange(this.treeManager.getNodeById(id), tags)
+    const preparedTags = this.prepareTagData(tags, this.treeManager)
+
+    this.props.onChange(this.treeManager.getNodeById(id), tags, preparedTags)
   }
 
   onAction = (nodeId, action) => {
@@ -276,8 +322,8 @@ class DropdownTreeSelect extends Component {
   }
 
   render() {
-    const { disabled, readOnly, mode, texts } = this.props
-    const { showDropdown, currentFocus, tags } = this.state
+    const { disabled, readOnly, mode, texts, allowCustomOptions, onTagUpdate } = this.props
+    const { showDropdown, currentFocus, tags, customOptions, searchModeOn, searchTerm } = this.state
 
     const activeDescendant = currentFocus ? `${currentFocus}_li` : undefined
 
@@ -298,40 +344,63 @@ class DropdownTreeSelect extends Component {
             { 'radio-select': mode === 'radioSelect' }
           )}
         >
-          <Trigger onTrigger={this.onTrigger} showDropdown={showDropdown} {...commonProps} tags={tags}>
-            <Input
-              inputRef={el => {
-                this.searchInput = el
-              }}
+          <div className="tag-container">
+            <Tags
               tags={tags}
-              onInputChange={this.onInputChange}
-              onFocus={this.onInputFocus}
-              onBlur={this.onInputBlur}
+              onTagUpdate={onTagUpdate}
               onTagRemove={this.onTagRemove}
-              onKeyDown={this.onKeyboardKeyDown}
+              treeManager={this.treeManager}
               {...commonProps}
             />
-          </Trigger>
-          {showDropdown && (
-            <div className="dropdown-content" {...this.getAriaAttributes()}>
-              {this.state.allNodesHidden ? (
-                <span className="no-matches">{texts.noMatches || 'No matches found'}</span>
-              ) : (
-                <Tree
-                  data={this.state.tree}
-                  keepTreeOnSearch={this.props.keepTreeOnSearch}
-                  keepChildrenOnSearch={this.props.keepChildrenOnSearch}
-                  searchModeOn={this.state.searchModeOn}
-                  onAction={this.onAction}
-                  onCheckboxChange={this.onCheckboxChange}
-                  onNodeToggle={this.onNodeToggle}
-                  mode={mode}
-                  showPartiallySelected={this.props.showPartiallySelected}
+            {allowCustomOptions && (
+              <CustomOptions customOptions={customOptions} onCustomOptionRemove={this.onCustomOptionRemove} />
+            )}
+          </div>
+          <div className="bulk-select-body">
+            <div className="search-with-options">
+              <Trigger onTrigger={this.onTrigger} showDropdown={showDropdown} {...commonProps} tags={tags}>
+                <Input
+                  inputRef={el => {
+                    this.searchInput = el
+                  }}
+                  tags={tags}
+                  onInputChange={this.onInputChange}
+                  onFocus={this.onInputFocus}
+                  onBlur={this.onInputBlur}
+                  onKeyDown={this.onKeyboardKeyDown}
+                  clearSearch={this.clearSearch}
+                  searchModeOn={searchModeOn}
                   {...commonProps}
                 />
+              </Trigger>
+              {searchModeOn && (
+                <CreateCustomOption searchTerm={searchTerm} onCustomOptionCreate={this.onCustomOptionCreate} />
               )}
             </div>
-          )}
+            {showDropdown && (
+              <div className="dropdown-content" {...this.getAriaAttributes()}>
+                {this.state.allNodesHidden ? (
+                  <span className="no-matches">{texts.noMatches || 'No matches found'}</span>
+                ) : (
+                  <Tree
+                    data={this.state.tree}
+                    keepTreeOnSearch={this.props.keepTreeOnSearch}
+                    keepChildrenOnSearch={this.props.keepChildrenOnSearch}
+                    searchModeOn={this.state.searchModeOn}
+                    onAction={this.onAction}
+                    onCheckboxChange={this.onCheckboxChange}
+                    onNodeToggle={this.onNodeToggle}
+                    mode={mode}
+                    showPartiallySelected={this.props.showPartiallySelected}
+                    customOptions={customOptions}
+                    onCustomOptionRemove={this.onCustomOptionRemove}
+                    onCustomOptionCreate={this.onCustomOptionCreate}
+                    {...commonProps}
+                  />
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     )
