@@ -1,6 +1,6 @@
 {
   "name": "react-dropdown-tree-select",
-  "version": "0.0.0-semantic-release",
+  "version": "2.1.0-fluxx.0",
   "description": "Lightweight, customizable and fast Dropdown Tree Select component for React",
   "keywords": [
     "react",
