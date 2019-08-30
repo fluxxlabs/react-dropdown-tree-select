@@ -326,6 +326,7 @@ class DropdownTreeSelect extends Component {
     const { showDropdown, currentFocus, tags, customOptions, searchModeOn, searchTerm } = this.state
 
     const activeDescendant = currentFocus ? `${currentFocus}_li` : undefined
+    const showCustomOptionCreate = allowCustomOptions && searchModeOn
 
     const commonProps = { disabled, readOnly, activeDescendant, texts, mode, clientId: this.clientId }
 
@@ -373,7 +374,7 @@ class DropdownTreeSelect extends Component {
                   {...commonProps}
                 />
               </Trigger>
-              {searchModeOn && (
+              {showCustomOptionCreate && (
                 <CreateCustomOption searchTerm={searchTerm} onCustomOptionCreate={this.onCustomOptionCreate} />
               )}
             </div>
