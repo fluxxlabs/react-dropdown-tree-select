@@ -3,8 +3,8 @@
   "warnings": [],
   "version": "4.31.0",
   "hash": "9fdf27dbf07b07bb1e1c",
-  "time": 5472,
-  "builtAt": 1567619372916,
+  "time": 4108,
+  "builtAt": 1567623007871,
   "publicPath": "",
   "outputPath": "/Users/ben/Documents/dev/repos/react-dropdown-tree-select/dist",
   "assetsByChunkName": {
@@ -1519,7 +1519,7 @@
               "moduleName": "./src/index.js + 28 modules",
               "type": "harmony side effect evaluation",
               "userRequest": "react",
-              "loc": "13:0-45"
+              "loc": "13:0-41"
             },
             {
               "moduleId": 11,
@@ -1528,7 +1528,7 @@
               "moduleName": "./src/index.js + 28 modules",
               "type": "harmony side effect evaluation",
               "userRequest": "react",
-              "loc": "13:0-41"
+              "loc": "13:0-45"
             },
             {
               "moduleId": 11,
@@ -6553,7 +6553,7 @@
           "moduleName": "./src/index.js + 28 modules",
           "type": "harmony side effect evaluation",
           "userRequest": "react",
-          "loc": "13:0-41"
+          "loc": "13:0-45"
         },
         {
           "moduleId": 11,
@@ -6562,7 +6562,7 @@
           "moduleName": "./src/index.js + 28 modules",
           "type": "harmony side effect evaluation",
           "userRequest": "react",
-          "loc": "13:0-45"
+          "loc": "13:0-41"
         },
         {
           "moduleId": 11,
