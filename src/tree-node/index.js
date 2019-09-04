@@ -113,9 +113,10 @@ class TreeNode extends PureComponent {
       showPartiallySelected,
       readOnly,
       clientId,
+      disableParentSelect,
     } = this.props
     const liCx = getNodeCx(this.props)
-    const style = keepTreeOnSearch || !searchModeOn ? { paddingLeft: `${(_depth || 0) * 30}px` } : {}
+    const style = keepTreeOnSearch || !searchModeOn ? { paddingLeft: `${(_depth || 0) * 20}px` } : {}
 
     const liId = `${_id}_li`
 
@@ -135,6 +136,9 @@ class TreeNode extends PureComponent {
           showPartiallySelected={showPartiallySelected}
           readOnly={readOnly}
           clientId={clientId}
+          disableParentSelect={disableParentSelect}
+          isParent={!isLeaf(_children)}
+          onNodeToggle={onNodeToggle}
         />
         <Actions actions={actions} onAction={onAction} id={_id} readOnly={readOnly} />
       </li>

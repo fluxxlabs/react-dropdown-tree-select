@@ -41,10 +41,45 @@ class NodeLabel extends PureComponent {
     e.nativeEvent.stopImmediatePropagation()
   }
 
+  handleNodeToggle = e => {
+    const { id, onNodeToggle } = this.props
+    onNodeToggle(id)
+
+    e.stopPropagation()
+    e.nativeEvent.stopImmediatePropagation()
+  }
+
+  shouldHideSelect = () => {
+    const { disableParentSelect, isParent } = this.props
+    return disableParentSelect && isParent
+  }
+
+  $select() {
+    const { mode, id, partial, checked, value, disabled, showPartiallySelected, readOnly, clientId } = this.props
+    const sharedProps = { id, value, checked, disabled, readOnly, tabIndex: -1 }
+    const shouldHideSelect = this.shouldHideSelect()
+
+    if (shouldHideSelect) return null
+
+    if (mode === 'radioSelect')
+      return (
+        <RadioButton name={clientId} className="radio-item" onChange={this.handleCheckboxChange} {...sharedProps} />
+      )
+    return (
+      <Checkbox
+        name={id}
+        className={cx('checkbox-item', { 'simple-select': mode === 'simpleSelect' })}
+        indeterminate={showPartiallySelected && partial}
+        onChange={this.handleCheckboxChange}
+        {...sharedProps}
+      />
+    )
+  }
+
   render() {
-    const { mode, title, label, id, partial, checked } = this.props
-    const { value, disabled, showPartiallySelected, readOnly, clientId } = this.props
+    const { mode, title, label, id, disabled, readOnly } = this.props
     const nodeLabelProps = { className: 'node-label' }
+    const shouldHideSelect = this.shouldHideSelect()
 
     // in case of simple select mode, there is no checkbox, so we need to handle the click via the node label
     // but not if the control is in readOnly or disabled state
@@ -52,23 +87,13 @@ class NodeLabel extends PureComponent {
 
     if (shouldRegisterClickHandler) {
       nodeLabelProps.onClick = this.handleCheckboxChange
+    } else if (shouldHideSelect) {
+      nodeLabelProps.onClick = this.handleNodeToggle
     }
-
-    const sharedProps = { id, value, checked, disabled, readOnly, tabIndex: -1 }
 
     return (
       <label title={title || label} htmlFor={id}>
-        {mode === 'radioSelect' ? (
-          <RadioButton name={clientId} className="radio-item" onChange={this.handleCheckboxChange} {...sharedProps} />
-        ) : (
-          <Checkbox
-            name={id}
-            className={cx('checkbox-item', { 'simple-select': mode === 'simpleSelect' })}
-            indeterminate={showPartiallySelected && partial}
-            onChange={this.handleCheckboxChange}
-            {...sharedProps}
-          />
-        )}
+        {this.$select()}
         <span {...nodeLabelProps}>{label}</span>
       </label>
     )
