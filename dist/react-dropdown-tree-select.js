@@ -3042,6 +3042,12 @@
                 },
               },
               {
+                key: 'componentDidMount',
+                value: function() {
+                  this.props.focusSearchInputOnMount && this.searchInput.focus()
+                },
+              },
+              {
                 key: 'componentWillUnmount',
                 value: function() {
                   document.removeEventListener('click', this.handleOutsideClick, !1)
@@ -3210,6 +3216,7 @@
         searchPredicate: c.a.func,
         onCustomOptionChange: c.a.func,
         onTagUpdate: c.a.func,
+        focusSearchInputOnMount: c.a.bool,
       }),
         (mt.defaultProps = {
           onFocus: function() {},

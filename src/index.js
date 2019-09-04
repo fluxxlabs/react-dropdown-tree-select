@@ -55,6 +55,7 @@ class DropdownTreeSelect extends Component {
     searchPredicate: PropTypes.func,
     onCustomOptionChange: PropTypes.func,
     onTagUpdate: PropTypes.func,
+    focusSearchInputOnMount: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -110,6 +111,11 @@ class DropdownTreeSelect extends Component {
 
   componentWillMount() {
     this.initNewProps(this.props)
+  }
+
+  componentDidMount() {
+    const { focusSearchInputOnMount } = this.props
+    if (focusSearchInputOnMount) this.searchInput.focus()
   }
 
   componentWillUnmount() {
