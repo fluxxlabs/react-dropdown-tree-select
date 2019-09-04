@@ -89,6 +89,7 @@ class Tree extends Component {
       onNodeToggle,
       activeDescendant,
       clientId,
+      disableParentSelect,
     } = props
     const items = []
     data.forEach(node => {
@@ -109,6 +110,7 @@ class Tree extends Component {
             readOnly={readOnly}
             clientId={clientId}
             activeDescendant={activeDescendant}
+            disableParentSelect={disableParentSelect}
           />
         )
       }

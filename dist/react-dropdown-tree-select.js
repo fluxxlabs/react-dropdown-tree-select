@@ -649,7 +649,7 @@
             })
           )
         },
-        y = function(e, t) {
+        b = function(e, t) {
           var n = void 0
           return function() {
             for (var r = arguments.length, o = Array(r), a = 0; a < r; a++) o[a] = arguments[a]
@@ -661,7 +661,7 @@
               i && e.apply(void 0, o)
           }
         },
-        b = ((r = 'rdts'),
+        y = ((r = 'rdts'),
         (o = 1),
         (a = new WeakMap()),
         {
@@ -719,7 +719,7 @@
               (n.handleInputChange = function(e) {
                 e.persist(), n.delayedCallback(e)
               }),
-              (n.delayedCallback = y(function(e) {
+              (n.delayedCallback = b(function(e) {
                 return n.props.onInputChange(e.target.value)
               }, 300)),
               n
@@ -803,9 +803,9 @@
         readOnly: c.a.bool,
         activeDescendant: c.a.string,
       }
-      var C = _,
-        T = n(6),
-        P = n.n(T),
+      var T = _,
+        C = n(6),
+        P = n.n(C),
         S = (function() {
           function e(e, t) {
             for (var n = 0; n < t.length; n++) {
@@ -1045,7 +1045,7 @@
       var V = B,
         Y = n(7),
         K = n.n(Y),
-        q = (function() {
+        H = (function() {
           function e(e, t) {
             for (var n = 0; n < t.length; n++) {
               var r = t[n]
@@ -1059,11 +1059,11 @@
             return n && e(t.prototype, n), r && e(t, r), t
           }
         })()
-      function U(e, t) {
+      function q(e, t) {
         if (!e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
         return !t || ('object' != typeof t && 'function' != typeof t) ? e : t
       }
-      var H = (function(e) {
+      var U = (function(e) {
         function t() {
           var e, n, r
           !(function(e, t) {
@@ -1071,14 +1071,14 @@
           })(this, t)
           for (var o = arguments.length, a = Array(o), i = 0; i < o; i++) a[i] = arguments[i]
           return (
-            (n = r = U(this, (e = t.__proto__ || Object.getPrototypeOf(t)).call.apply(e, [this].concat(a)))),
+            (n = r = q(this, (e = t.__proto__ || Object.getPrototypeOf(t)).call.apply(e, [this].concat(a)))),
             (r.handleClick = function() {
               var e = r.props,
                 t = e.onAction,
                 n = e.actionData
               t && t(n.nodeId, n.action)
             }),
-            U(r, n)
+            q(r, n)
           )
         }
         return (
@@ -1090,7 +1090,7 @@
             })),
               t && (Object.setPrototypeOf ? Object.setPrototypeOf(e, t) : (e.__proto__ = t))
           })(t, u['PureComponent']),
-          q(t, [
+          H(t, [
             {
               key: 'render',
               value: function() {
@@ -1106,7 +1106,7 @@
           t
         )
       })()
-      ;(H.propTypes = {
+      ;(U.propTypes = {
         title: c.a.string,
         text: c.a.string,
         className: c.a.string,
@@ -1114,8 +1114,8 @@
         onAction: c.a.func,
         readOnly: c.a.bool,
       }),
-        (H.defaultProps = { onAction: function() {} })
-      var W = H,
+        (U.defaultProps = { onAction: function() {} })
+      var W = U,
         z =
           Object.assign ||
           function(e) {
@@ -1408,6 +1408,17 @@
                 'simpleSelect' === n || 'radioSelect' === n ? a(o, !0) : a(o, e.target.checked)
                 e.stopPropagation(), e.nativeEvent.stopImmediatePropagation()
               }),
+              (r.handleNodeToggle = function(e) {
+                var t = r.props,
+                  n = t.id
+                ;(0, t.onNodeToggle)(n), e.stopPropagation(), e.nativeEvent.stopImmediatePropagation()
+              }),
+              (r.shouldHideSelect = function() {
+                var e = r.props,
+                  t = e.disableParentSelect,
+                  n = e.isParent
+                return t && n
+              }),
               pe(r, n)
             )
           }
@@ -1422,6 +1433,41 @@
             })(t, u['PureComponent']),
             ue(t, [
               {
+                key: '$select',
+                value: function() {
+                  var e = this.props,
+                    t = e.mode,
+                    n = e.id,
+                    r = e.partial,
+                    o = e.checked,
+                    a = e.value,
+                    i = e.disabled,
+                    l = e.showPartiallySelected,
+                    s = e.readOnly,
+                    c = e.clientId,
+                    u = { id: n, value: a, checked: o, disabled: i, readOnly: s, tabIndex: -1 }
+                  return this.shouldHideSelect()
+                    ? null
+                    : 'radioSelect' === t
+                    ? p.a.createElement(
+                        ie,
+                        ce({ name: c, className: 'radio-item', onChange: this.handleCheckboxChange }, u)
+                      )
+                    : p.a.createElement(
+                        te,
+                        ce(
+                          {
+                            name: n,
+                            className: he('checkbox-item', { 'simple-select': 'simpleSelect' === t }),
+                            indeterminate: l && r,
+                            onChange: this.handleCheckboxChange,
+                          },
+                          u
+                        )
+                      )
+                },
+              },
+              {
                 key: 'render',
                 value: function() {
                   var e = this.props,
@@ -1429,38 +1475,20 @@
                     n = e.title,
                     r = e.label,
                     o = e.id,
-                    a = e.partial,
-                    i = e.checked,
-                    l = this.props,
-                    s = l.value,
-                    c = l.disabled,
-                    u = l.showPartiallySelected,
-                    h = l.readOnly,
-                    d = l.clientId,
-                    f = { className: 'node-label' }
-                  'simpleSelect' === t && !h && !c && (f.onClick = this.handleCheckboxChange)
-                  var y = { id: o, value: s, checked: i, disabled: c, readOnly: h, tabIndex: -1 }
-                  return p.a.createElement(
-                    'label',
-                    { title: n || r, htmlFor: o },
-                    'radioSelect' === t
-                      ? p.a.createElement(
-                          ie,
-                          ce({ name: d, className: 'radio-item', onChange: this.handleCheckboxChange }, y)
-                        )
-                      : p.a.createElement(
-                          te,
-                          ce(
-                            {
-                              name: o,
-                              className: he('checkbox-item', { 'simple-select': 'simpleSelect' === t }),
-                              indeterminate: u && a,
-                              onChange: this.handleCheckboxChange,
-                            },
-                            y
-                          )
-                        ),
-                    p.a.createElement('span', f, r)
+                    a = e.disabled,
+                    i = e.readOnly,
+                    l = { className: 'node-label' },
+                    s = this.shouldHideSelect()
+                  return (
+                    'simpleSelect' === t && !i && !a
+                      ? (l.onClick = this.handleCheckboxChange)
+                      : s && (l.onClick = this.handleNodeToggle),
+                    p.a.createElement(
+                      'label',
+                      { title: n || r, htmlFor: o },
+                      this.$select(),
+                      p.a.createElement('span', l, r)
+                    )
                   )
                 },
               },
@@ -1485,7 +1513,7 @@
         clientId: c.a.string,
       }
       var fe = de,
-        ye = (function() {
+        be = (function() {
           function e(e, t) {
             for (var n = 0; n < t.length; n++) {
               var r = t[n]
@@ -1499,7 +1527,7 @@
             return n && e(t.prototype, n), r && e(t, r), t
           }
         })()
-      function be(e, t) {
+      function ye(e, t) {
         if (!e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
         return !t || ('object' != typeof t && 'function' != typeof t) ? e : t
       }
@@ -1512,14 +1540,14 @@
             })(this, t)
             for (var o = arguments.length, a = Array(o), i = 0; i < o; i++) a[i] = arguments[i]
             return (
-              (n = r = be(this, (e = t.__proto__ || Object.getPrototypeOf(t)).call.apply(e, [this].concat(a)))),
+              (n = r = ye(this, (e = t.__proto__ || Object.getPrototypeOf(t)).call.apply(e, [this].concat(a)))),
               (r.onToggle = function(e) {
                 e.stopPropagation(), e.nativeEvent.stopImmediatePropagation(), r.props.onNodeToggle(r.props.id)
               }),
               (r.onKeyDown = function(e) {
                 ;('Enter' !== e.key && 32 !== e.keyCode) || (r.props.onNodeToggle(r.props.id), e.preventDefault())
               }),
-              be(r, n)
+              ye(r, n)
             )
           }
           return (
@@ -1531,7 +1559,7 @@
               })),
                 t && (Object.setPrototypeOf ? Object.setPrototypeOf(e, t) : (e.__proto__ = t))
             })(t, u['PureComponent']),
-            ye(t, [
+            be(t, [
               {
                 key: 'render',
                 value: function() {
@@ -1583,10 +1611,10 @@
         return !t || ('object' != typeof t && 'function' != typeof t) ? e : t
       }
       var _e = l.a.bind(se.a),
-        Ce = function(e) {
+        Te = function(e) {
           return d(e)
         },
-        Te = (function(e) {
+        Ce = (function(e) {
           function t() {
             var e, n, r
             !(function(e, t) {
@@ -1646,8 +1674,8 @@
                     u = e.partial,
                     d = e.checked,
                     f = e.value,
-                    y = e.disabled,
-                    b = e.actions,
+                    b = e.disabled,
+                    y = e.actions,
                     g = e.onAction,
                     v = e.searchModeOn,
                     m = e.onNodeToggle,
@@ -1655,6 +1683,7 @@
                     w = e.showPartiallySelected,
                     k = e.readOnly,
                     _ = e.clientId,
+                    T = e.disableParentSelect,
                     C = (function(e) {
                       var t = e.keepTreeOnSearch,
                         n = e.keepChildrenOnSearch,
@@ -1672,8 +1701,8 @@
                       return _e(
                         'node',
                         {
-                          leaf: Ce(r),
-                          tree: !Ce(r),
+                          leaf: Te(r),
+                          tree: !Te(r),
                           disabled: i,
                           hide: s,
                           'match-in-children': t && o,
@@ -1686,12 +1715,12 @@
                         c
                       )
                     })(this.props),
-                    T = n || !v ? { paddingLeft: 30 * (i || 0) + 'px' } : {},
-                    P = r + '_li'
+                    P = n || !v ? { paddingLeft: 20 * (i || 0) + 'px' } : {},
+                    S = r + '_li'
                   return p.a.createElement(
                     'li',
-                    Oe({ className: C, style: T, id: P }, h(a), this.getAriaAttributes()),
-                    p.a.createElement(me, { isLeaf: Ce(o), expanded: l, id: r, onNodeToggle: m }),
+                    Oe({ className: C, style: P, id: S }, h(a), this.getAriaAttributes()),
+                    p.a.createElement(me, { isLeaf: Te(o), expanded: l, id: r, onNodeToggle: m }),
                     p.a.createElement(fe, {
                       title: s,
                       label: c,
@@ -1699,14 +1728,17 @@
                       partial: u,
                       checked: d,
                       value: f,
-                      disabled: y,
+                      disabled: b,
                       mode: t,
                       onCheckboxChange: O,
                       showPartiallySelected: w,
                       readOnly: k,
                       clientId: _,
+                      disableParentSelect: T,
+                      isParent: !Te(o),
+                      onNodeToggle: m,
                     }),
-                    p.a.createElement(Z, { actions: b, onAction: g, id: r, readOnly: k })
+                    p.a.createElement(Z, { actions: y, onAction: g, id: r, readOnly: k })
                   )
                 },
               },
@@ -1714,7 +1746,7 @@
             t
           )
         })()
-      Te.propTypes = {
+      Ce.propTypes = {
         _id: c.a.string.isRequired,
         _depth: c.a.number,
         _children: c.a.array,
@@ -1739,7 +1771,7 @@
         readOnly: c.a.bool,
         clientId: c.a.string,
       }
-      var Pe = Te,
+      var Pe = Ce,
         Se =
           Object.assign ||
           function(e) {
@@ -1885,6 +1917,7 @@
                 h = e.onNodeToggle,
                 d = e.activeDescendant,
                 f = e.clientId,
+                b = e.disableParentSelect,
                 y = []
               return (
                 t.forEach(function(e) {
@@ -1907,6 +1940,7 @@
                           readOnly: l,
                           clientId: f,
                           activeDescendant: d,
+                          disableParentSelect: b,
                         })
                       )
                     )
@@ -2248,15 +2282,15 @@
           )
         })(),
         Ke = n(8),
-        qe = n.n(Ke),
-        Ue = function(e) {
+        He = n.n(Ke),
+        qe = function(e) {
           return e
         },
-        He = function(e) {
+        Ue = function(e) {
           var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : 'children',
-            n = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : Ue
+            n = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : qe
           return (
-            qe()(e[t], function(e) {
+            He()(e[t], function(e) {
               return n(e).checked
             }) ||
             e[t].some(function(e) {
@@ -2330,7 +2364,7 @@
                     }),
                     s &&
                       !t.checked &&
-                      ((t.partial = He(t)),
+                      ((t.partial = Ue(t)),
                       f ||
                         d(t.children) ||
                         !t.children.every(function(e) {
@@ -2538,7 +2572,7 @@
             return n && e(t.prototype, n), r && e(t, r), t
           }
         })()
-      var yt = (function() {
+      var bt = (function() {
           function e(t) {
             var n = t.data,
               r = t.mode,
@@ -2689,7 +2723,7 @@
                 value: function(e) {
                   for (var t = e._parent; t; ) {
                     var n = this.getNodeById(t)
-                    ;(n.checked = !1), (n.partial = He(n, '_children', this.getNodeById.bind(this))), (t = n._parent)
+                    ;(n.checked = !1), (n.partial = Ue(n, '_children', this.getNodeById.bind(this))), (t = n._parent)
                   }
                 },
               },
@@ -2701,7 +2735,7 @@
                     ;(r.checked = r._children.every(function(e) {
                       return t.getNodeById(e).checked
                     })),
-                      (r.partial = He(r, '_children', this.getNodeById.bind(this))),
+                      (r.partial = Ue(r, '_children', this.getNodeById.bind(this))),
                       (n = r._parent)
                   }
                 },
@@ -2802,7 +2836,7 @@
             e
           )
         })(),
-        bt =
+        yt =
           Object.assign ||
           function(e) {
             for (var t = 1; t < arguments.length; t++) {
@@ -2851,7 +2885,7 @@
                   a = e.showDropdown,
                   i = e.showPartiallySelected,
                   l = e.searchPredicate
-                n.treeManager = new yt({
+                n.treeManager = new bt({
                   data: t,
                   mode: o,
                   showPartiallySelected: i,
@@ -2861,7 +2895,7 @@
                 var s = n.state.currentFocus && n.treeManager.getNodeById(n.state.currentFocus)
                 s && (s._focused = !0),
                   n.setState(function(e) {
-                    return bt(
+                    return yt(
                       { showDropdown: /initial|always/.test(a) || !0 === e.showDropdown, customOptions: r },
                       n.treeManager.getTreeAndTags()
                     )
@@ -2882,7 +2916,7 @@
                         ? document.addEventListener('click', n.handleOutsideClick, !1)
                         : document.removeEventListener('click', n.handleOutsideClick, !1)),
                     t ? n.props.onFocus() : n.props.onBlur(),
-                    t ? { showDropdown: t } : bt({ showDropdown: t }, n.resetSearchState())
+                    t ? { showDropdown: t } : yt({ showDropdown: t }, n.resetSearchState())
                   )
                 }, t)
               }),
@@ -2920,13 +2954,13 @@
                     })(t || []),
                     [e]
                   )
-                n.setState(bt({ customOptions: r }, n.resetSearchState()), n.onCustomChangeCallback(r))
+                n.setState(yt({ customOptions: r }, n.resetSearchState()), n.onCustomChangeCallback(r))
               }),
               (n.onCustomChangeCallback = function(e) {
                 ;(0, n.props.onCustomOptionChange)(e)
               }),
               (n.clearSearch = function() {
-                n.setState(bt({}, n.resetSearchState()))
+                n.setState(yt({}, n.resetSearchState()))
               }),
               (n.prepareTagData = function(e, t) {
                 return e.map(function(e) {
@@ -3015,10 +3049,10 @@
                 var e = n.props,
                   t = e.mode,
                   r = e.texts
-                return 'radioSelect' !== t ? {} : bt({ role: 'radiogroup' }, m(r.label))
+                return 'radioSelect' !== t ? {} : yt({ role: 'radiogroup' }, m(r.label))
               }),
               (n.state = { searchModeOn: !1, currentFocus: void 0, searchTerm: null }),
-              (n.clientId = e.id || b.get(n)),
+              (n.clientId = e.id || y.get(n)),
               (n.onCustomOptionRemove = n.onCustomOptionRemove.bind(n)),
               (n.onCustomOptionCreate = n.onCustomOptionCreate.bind(n)),
               (n.clearSearch = n.clearSearch.bind(n)),
@@ -3070,18 +3104,19 @@
                     a = t.texts,
                     i = t.allowCustomOptions,
                     l = t.onTagUpdate,
-                    s = this.state,
-                    c = s.showDropdown,
-                    u = s.currentFocus,
-                    h = s.tags,
-                    d = s.customOptions,
-                    f = s.searchModeOn,
-                    y = s.searchTerm,
-                    b = i && f,
-                    g = {
+                    s = t.disableParentSelect,
+                    c = this.state,
+                    u = c.showDropdown,
+                    h = c.currentFocus,
+                    d = c.tags,
+                    f = c.customOptions,
+                    b = c.searchModeOn,
+                    y = c.searchTerm,
+                    g = i && b,
+                    v = {
                       disabled: n,
                       readOnly: r,
-                      activeDescendant: u ? u + '_li' : void 0,
+                      activeDescendant: h ? h + '_li' : void 0,
                       texts: a,
                       mode: o,
                       clientId: this.clientId,
@@ -3109,13 +3144,13 @@
                         { className: 'tag-container' },
                         p.a.createElement(
                           Ie,
-                          bt(
-                            { tags: h, onTagUpdate: l, onTagRemove: this.onTagRemove, treeManager: this.treeManager },
-                            g
+                          yt(
+                            { tags: d, onTagUpdate: l, onTagRemove: this.onTagRemove, treeManager: this.treeManager },
+                            v
                           )
                         ),
                         i &&
-                          p.a.createElement(Be, { customOptions: d, onCustomOptionRemove: this.onCustomOptionRemove })
+                          p.a.createElement(Be, { customOptions: f, onCustomOptionRemove: this.onCustomOptionRemove })
                       ),
                       p.a.createElement(
                         'div',
@@ -3125,32 +3160,32 @@
                           { className: 'search-with-options' },
                           p.a.createElement(
                             V,
-                            bt({ onTrigger: this.onTrigger, showDropdown: c }, g, { tags: h }),
+                            yt({ onTrigger: this.onTrigger, showDropdown: u }, v, { tags: d }),
                             p.a.createElement(
-                              C,
-                              bt(
+                              T,
+                              yt(
                                 {
                                   inputRef: function(t) {
                                     e.searchInput = t
                                   },
-                                  tags: h,
+                                  tags: d,
                                   onInputChange: this.onInputChange,
                                   onFocus: this.onInputFocus,
                                   onBlur: this.onInputBlur,
                                   onKeyDown: this.onKeyboardKeyDown,
                                   clearSearch: this.clearSearch,
-                                  searchModeOn: f,
+                                  searchModeOn: b,
                                 },
-                                g
+                                v
                               )
                             )
                           ),
-                          b && p.a.createElement(Ye, { searchTerm: y, onCustomOptionCreate: this.onCustomOptionCreate })
+                          g && p.a.createElement(Ye, { searchTerm: y, onCustomOptionCreate: this.onCustomOptionCreate })
                         ),
-                        c &&
+                        u &&
                           p.a.createElement(
                             'div',
-                            bt({ className: 'dropdown-content' }, this.getAriaAttributes()),
+                            yt({ className: 'dropdown-content' }, this.getAriaAttributes()),
                             this.state.allNodesHidden
                               ? p.a.createElement(
                                   'span',
@@ -3159,7 +3194,7 @@
                                 )
                               : p.a.createElement(
                                   Ne,
-                                  bt(
+                                  yt(
                                     {
                                       data: this.state.tree,
                                       keepTreeOnSearch: this.props.keepTreeOnSearch,
@@ -3170,11 +3205,12 @@
                                       onNodeToggle: this.onNodeToggle,
                                       mode: o,
                                       showPartiallySelected: this.props.showPartiallySelected,
-                                      customOptions: d,
+                                      customOptions: f,
                                       onCustomOptionRemove: this.onCustomOptionRemove,
                                       onCustomOptionCreate: this.onCustomOptionCreate,
+                                      disableParentSelect: s,
                                     },
-                                    g
+                                    v
                                   )
                                 )
                           )
@@ -3217,6 +3253,7 @@
         onCustomOptionChange: c.a.func,
         onTagUpdate: c.a.func,
         focusSearchInputOnMount: c.a.bool,
+        disableParentSelect: c.a.bool,
       }),
         (mt.defaultProps = {
           onFocus: function() {},
