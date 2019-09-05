@@ -276,10 +276,15 @@ class DropdownTreeSelect extends Component {
   }
 
   onKeyboardKeyDown = e => {
-    const { readOnly, mode } = this.props
-    const { showDropdown, tags, searchModeOn, currentFocus } = this.state
+    const { readOnly, mode, allowCustomOptions } = this.props
+    const { showDropdown, searchModeOn, currentFocus } = this.state
     const tm = this.treeManager
     const tree = searchModeOn ? tm.matchTree : tm.tree
+
+    if (allowCustomOptions && e.key === 'Enter' && this.searchInput.value.length > 1) {
+      e.preventDefault()
+      this.onCustomOptionCreate(this.searchInput.value)
+    }
 
     if (!showDropdown && (keyboardNavigation.isValidKey(e.key, false) || /^\w$/i.test(e.key))) {
       // Triggers open of dropdown and retriggers event
@@ -308,9 +313,6 @@ class DropdownTreeSelect extends Component {
         this.handleClick()
       }
       return
-    } else if (e.key === 'Backspace' && tags.length && this.searchInput.value.length === 0) {
-      const lastTag = tags.pop()
-      this.onCheckboxChange(lastTag._id, false)
     } else {
       return
     }
