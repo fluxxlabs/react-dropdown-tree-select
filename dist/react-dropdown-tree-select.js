@@ -3015,27 +3015,29 @@
                 var t = n.props,
                   r = t.readOnly,
                   o = t.mode,
-                  a = n.state,
-                  i = a.showDropdown,
-                  l = a.tags,
-                  s = a.searchModeOn,
-                  c = a.currentFocus,
+                  a = t.allowCustomOptions,
+                  i = n.state,
+                  l = i.showDropdown,
+                  s = i.searchModeOn,
+                  c = i.currentFocus,
                   u = n.treeManager,
                   p = s ? u.matchTree : u.tree
-                if (i || (!dt.isValidKey(e.key, !1) && !/^\w$/i.test(e.key)))
-                  if (i && dt.isValidKey(e.key, !0)) {
-                    var h = u.handleNavigationKey(c, p, e.key, r, !s, n.onCheckboxChange, n.onNodeToggle)
-                    h !== c && n.setState({ currentFocus: h })
-                  } else {
-                    if (i && ['Escape', 'Tab'].indexOf(e.key) > -1)
-                      return void ('simpleSelect' === o && p.has(c)
-                        ? n.onCheckboxChange(c, !0)
-                        : ((n.keepDropdownActive = !1), n.handleClick()))
-                    if ('Backspace' !== e.key || !l.length || 0 !== n.searchInput.value.length) return
-                    var d = l.pop()
-                    n.onCheckboxChange(d._id, !1)
-                  }
-                else if (
+                if (
+                  (a &&
+                    'Enter' === e.key &&
+                    n.searchInput.value.length > 1 &&
+                    (e.preventDefault(), n.onCustomOptionCreate(n.searchInput.value)),
+                  l || (!dt.isValidKey(e.key, !1) && !/^\w$/i.test(e.key)))
+                ) {
+                  if (!l || !dt.isValidKey(e.key, !0))
+                    return l && ['Escape', 'Tab'].indexOf(e.key) > -1
+                      ? void ('simpleSelect' === o && p.has(c)
+                          ? n.onCheckboxChange(c, !0)
+                          : ((n.keepDropdownActive = !1), n.handleClick()))
+                      : void 0
+                  var h = u.handleNavigationKey(c, p, e.key, r, !s, n.onCheckboxChange, n.onNodeToggle)
+                  h !== c && n.setState({ currentFocus: h })
+                } else if (
                   (e.persist(),
                   n.handleClick(null, function() {
                     return n.onKeyboardKeyDown(e)
