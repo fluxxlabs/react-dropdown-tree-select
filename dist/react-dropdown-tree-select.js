@@ -2927,7 +2927,7 @@
                 var t = n.treeManager.filterTree(e, n.props.keepTreeOnSearch, n.props.keepChildrenOnSearch),
                   r = t.allNodesHidden,
                   o = t.tree,
-                  a = e.length > 0
+                  a = e.trim().length > 0
                 n.setState({ tree: o, searchModeOn: a, allNodesHidden: r, searchTerm: e })
               }),
               (n.onTagRemove = function(e, t) {
@@ -3021,11 +3021,12 @@
                   s = i.searchModeOn,
                   c = i.currentFocus,
                   u = n.treeManager,
-                  p = s ? u.matchTree : u.tree
+                  p = s ? u.matchTree : u.tree,
+                  h = n.searchInput.value.trim()
                 if (
                   (a &&
                     'Enter' === e.key &&
-                    n.searchInput.value.length > 1 &&
+                    h.length > 1 &&
                     (e.preventDefault(), n.onCustomOptionCreate(n.searchInput.value)),
                   l || (!dt.isValidKey(e.key, !1) && !/^\w$/i.test(e.key)))
                 ) {
@@ -3035,8 +3036,8 @@
                           ? n.onCheckboxChange(c, !0)
                           : ((n.keepDropdownActive = !1), n.handleClick()))
                       : void 0
-                  var h = u.handleNavigationKey(c, p, e.key, r, !s, n.onCheckboxChange, n.onNodeToggle)
-                  h !== c && n.setState({ currentFocus: h })
+                  var d = u.handleNavigationKey(c, p, e.key, r, !s, n.onCheckboxChange, n.onNodeToggle)
+                  d !== c && n.setState({ currentFocus: d })
                 } else if (
                   (e.persist(),
                   n.handleClick(null, function() {

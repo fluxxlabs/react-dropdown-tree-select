@@ -162,7 +162,8 @@ class DropdownTreeSelect extends Component {
       this.props.keepTreeOnSearch,
       this.props.keepChildrenOnSearch
     )
-    const searchModeOn = value.length > 0
+    const trimmedValue = value.trim()
+    const searchModeOn = trimmedValue.length > 0
 
     this.setState({
       tree,
@@ -280,8 +281,9 @@ class DropdownTreeSelect extends Component {
     const { showDropdown, searchModeOn, currentFocus } = this.state
     const tm = this.treeManager
     const tree = searchModeOn ? tm.matchTree : tm.tree
+    const searchInputValue = this.searchInput.value.trim()
 
-    if (allowCustomOptions && e.key === 'Enter' && this.searchInput.value.length > 1) {
+    if (allowCustomOptions && e.key === 'Enter' && searchInputValue.length > 1) {
       e.preventDefault()
       this.onCustomOptionCreate(this.searchInput.value)
     }
