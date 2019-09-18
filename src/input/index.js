@@ -30,19 +30,28 @@ class Input extends PureComponent {
     this.delayedCallback(e)
   }
 
+  $searchIcon() {
+    const { clearSearch, searchModeOn } = this.props
+
+    if (searchModeOn) {
+      return (
+        <button
+          id="clear-search"
+          onClick={clearSearch}
+          className="clear-search-btn"
+          type="button"
+          aria-label="clear-search-button"
+        >
+          &#10005;
+        </button>
+      )
+    }
+
+    return <span className="search-icon">&#9906;</span>
+  }
+
   render() {
-    const {
-      inputRef,
-      texts = {},
-      onFocus,
-      onBlur,
-      disabled,
-      readOnly,
-      onKeyDown,
-      activeDescendant,
-      clearSearch,
-      searchModeOn,
-    } = this.props
+    const { inputRef, texts = {}, onFocus, onBlur, disabled, readOnly, onKeyDown, activeDescendant } = this.props
 
     return (
       <div className="search-input">
@@ -61,17 +70,7 @@ class Input extends PureComponent {
           aria-autocomplete={onKeyDown ? 'list' : undefined}
           {...getAriaLabel(texts.label)}
         />
-        {searchModeOn && (
-          <button
-            id="clear-search"
-            onClick={clearSearch}
-            className="clear-search-btn"
-            type="button"
-            aria-label="clear-search-button"
-          >
-            &#10005;
-          </button>
-        )}
+        {this.$searchIcon()}
       </div>
     )
   }

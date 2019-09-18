@@ -39,6 +39,8 @@ class DropdownTreeSelect extends Component {
       noMatches: PropTypes.string,
       label: PropTypes.string,
       labelRemove: PropTypes.string,
+      customOptionsPlaceholderTitle: PropTypes.string,
+      customOptionsPlaceholderSubtitle: PropTypes.string,
     }),
     showDropdown: PropTypes.oneOf(['default', 'initial', 'always']),
     className: PropTypes.string,
@@ -365,7 +367,12 @@ class DropdownTreeSelect extends Component {
               {...commonProps}
             />
             {allowCustomOptions && (
-              <CustomOptions customOptions={customOptions} onCustomOptionRemove={this.onCustomOptionRemove} />
+              <CustomOptions
+                tags={tags}
+                customOptions={customOptions}
+                onCustomOptionRemove={this.onCustomOptionRemove}
+                texts={texts}
+              />
             )}
           </div>
           <div className="bulk-select-body">

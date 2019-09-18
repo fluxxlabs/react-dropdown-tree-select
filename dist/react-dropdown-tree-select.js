@@ -649,7 +649,7 @@
             })
           )
         },
-        b = function(e, t) {
+        y = function(e, t) {
           var n = void 0
           return function() {
             for (var r = arguments.length, o = Array(r), a = 0; a < r; a++) o[a] = arguments[a]
@@ -661,7 +661,7 @@
               i && e.apply(void 0, o)
           }
         },
-        y = ((r = 'rdts'),
+        b = ((r = 'rdts'),
         (o = 1),
         (a = new WeakMap()),
         {
@@ -719,7 +719,7 @@
               (n.handleInputChange = function(e) {
                 e.persist(), n.delayedCallback(e)
               }),
-              (n.delayedCallback = b(function(e) {
+              (n.delayedCallback = y(function(e) {
                 return n.props.onInputChange(e.target.value)
               }, 300)),
               n
@@ -736,6 +736,26 @@
             })(t, u['PureComponent']),
             w(t, [
               {
+                key: '$searchIcon',
+                value: function() {
+                  var e = this.props,
+                    t = e.clearSearch
+                  return e.searchModeOn
+                    ? p.a.createElement(
+                        'button',
+                        {
+                          id: 'clear-search',
+                          onClick: t,
+                          className: 'clear-search-btn',
+                          type: 'button',
+                          'aria-label': 'clear-search-button',
+                        },
+                        '✕'
+                      )
+                    : p.a.createElement('span', { className: 'search-icon' }, '⚲')
+                },
+              },
+              {
                 key: 'render',
                 value: function() {
                   var e = this.props,
@@ -747,9 +767,7 @@
                     i = e.disabled,
                     l = e.readOnly,
                     s = e.onKeyDown,
-                    c = e.activeDescendant,
-                    u = e.clearSearch,
-                    h = e.searchModeOn
+                    c = e.activeDescendant
                   return p.a.createElement(
                     'div',
                     { className: 'search-input' },
@@ -773,18 +791,7 @@
                         m(r.label)
                       )
                     ),
-                    h &&
-                      p.a.createElement(
-                        'button',
-                        {
-                          id: 'clear-search',
-                          onClick: u,
-                          className: 'clear-search-btn',
-                          type: 'button',
-                          'aria-label': 'clear-search-button',
-                        },
-                        '✕'
-                      )
+                    this.$searchIcon()
                   )
                 },
               },
@@ -1116,7 +1123,7 @@
       }),
         (U.defaultProps = { onAction: function() {} })
       var W = U,
-        z =
+        $ =
           Object.assign ||
           function(e) {
             for (var t = 1; t < arguments.length; t++) {
@@ -1125,7 +1132,7 @@
             }
             return e
           },
-        $ = (function() {
+        z = (function() {
           function e(e, t) {
             for (var n = 0; n < t.length; n++) {
               var r = t[n]
@@ -1160,7 +1167,7 @@
             })),
               t && (Object.setPrototypeOf ? Object.setPrototypeOf(e, t) : (e.__proto__ = t))
           })(t, u['PureComponent']),
-          $(t, [
+          z(t, [
             {
               key: 'render',
               value: function() {
@@ -1178,7 +1185,7 @@
                       var o = e.id || 'action-' + t
                       return p.a.createElement(
                         W,
-                        z({ key: o }, r, e, { actionData: { action: z({}, e, { id: o }), nodeId: n } })
+                        $({ key: o }, r, e, { actionData: { action: $({}, e, { id: o }), nodeId: n } })
                       )
                     })
               },
@@ -1513,7 +1520,7 @@
         clientId: c.a.string,
       }
       var fe = de,
-        be = (function() {
+        ye = (function() {
           function e(e, t) {
             for (var n = 0; n < t.length; n++) {
               var r = t[n]
@@ -1527,7 +1534,7 @@
             return n && e(t.prototype, n), r && e(t, r), t
           }
         })()
-      function ye(e, t) {
+      function be(e, t) {
         if (!e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
         return !t || ('object' != typeof t && 'function' != typeof t) ? e : t
       }
@@ -1540,14 +1547,14 @@
             })(this, t)
             for (var o = arguments.length, a = Array(o), i = 0; i < o; i++) a[i] = arguments[i]
             return (
-              (n = r = ye(this, (e = t.__proto__ || Object.getPrototypeOf(t)).call.apply(e, [this].concat(a)))),
+              (n = r = be(this, (e = t.__proto__ || Object.getPrototypeOf(t)).call.apply(e, [this].concat(a)))),
               (r.onToggle = function(e) {
                 e.stopPropagation(), e.nativeEvent.stopImmediatePropagation(), r.props.onNodeToggle(r.props.id)
               }),
               (r.onKeyDown = function(e) {
                 ;('Enter' !== e.key && 32 !== e.keyCode) || (r.props.onNodeToggle(r.props.id), e.preventDefault())
               }),
-              ye(r, n)
+              be(r, n)
             )
           }
           return (
@@ -1559,7 +1566,7 @@
               })),
                 t && (Object.setPrototypeOf ? Object.setPrototypeOf(e, t) : (e.__proto__ = t))
             })(t, u['PureComponent']),
-            be(t, [
+            ye(t, [
               {
                 key: 'render',
                 value: function() {
@@ -1674,8 +1681,8 @@
                     u = e.partial,
                     d = e.checked,
                     f = e.value,
-                    b = e.disabled,
-                    y = e.actions,
+                    y = e.disabled,
+                    b = e.actions,
                     g = e.onAction,
                     v = e.searchModeOn,
                     m = e.onNodeToggle,
@@ -1728,7 +1735,7 @@
                       partial: u,
                       checked: d,
                       value: f,
-                      disabled: b,
+                      disabled: y,
                       mode: t,
                       onCheckboxChange: O,
                       showPartiallySelected: w,
@@ -1738,7 +1745,7 @@
                       isParent: !Te(o),
                       onNodeToggle: m,
                     }),
-                    p.a.createElement(Z, { actions: y, onAction: g, id: r, readOnly: k })
+                    p.a.createElement(Z, { actions: b, onAction: g, id: r, readOnly: k })
                   )
                 },
               },
@@ -1917,8 +1924,8 @@
                 h = e.onNodeToggle,
                 d = e.activeDescendant,
                 f = e.clientId,
-                b = e.disableParentSelect,
-                y = []
+                y = e.disableParentSelect,
+                b = []
               return (
                 t.forEach(function(e) {
                   ;(function(e, t, n) {
@@ -1926,7 +1933,7 @@
                     var r = e._parent && n.get(e._parent)
                     return !r || r.expanded
                   })(e, o, t) &&
-                    y.push(
+                    b.push(
                       p.a.createElement(
                         Pe,
                         Se({ keepTreeOnSearch: n, keepChildrenOnSearch: r, key: e._id }, e, {
@@ -1940,12 +1947,12 @@
                           readOnly: l,
                           clientId: f,
                           activeDescendant: d,
-                          disableParentSelect: b,
+                          disableParentSelect: y,
                         })
                       )
                     )
                 }),
-                y
+                b
               )
             }),
             (this.hasMore = function() {
@@ -2182,12 +2189,30 @@
             })(t, u['PureComponent']),
             Le(t, [
               {
+                key: '$emptyState',
+                value: function() {
+                  var e = this.props,
+                    t = e.tags,
+                    n = e.texts,
+                    r = n.customOptionsPlaceholderTitle,
+                    o = n.customOptionsPlaceholderSubtitle
+                  return t.length
+                    ? p.a.createElement(
+                        'div',
+                        { className: 'custom-options-placeholder' },
+                        p.a.createElement('span', { className: 'custom-options-placeholder--title' }, r, ' '),
+                        p.a.createElement('span', { className: 'custom-options-placeholder--subtitle' }, o)
+                      )
+                    : null
+                },
+              },
+              {
                 key: 'render',
                 value: function() {
                   var e = this.props,
                     t = e.customOptions,
                     n = e.onCustomOptionRemove
-                  return t
+                  return !!t && t.length
                     ? p.a.createElement(
                         'div',
                         { className: 'custom-options' },
@@ -2203,7 +2228,7 @@
                           })
                         )
                       )
-                    : null
+                    : this.$emptyState()
                 },
               },
             ]),
@@ -2384,14 +2409,14 @@
             rootPrefixId: i,
           })
         },
-        ze = function e(t, n, r) {
+        $e = function e(t, n, r) {
           ;(n[t._id] = !0),
             d(t._children) ||
               t._children.forEach(function(t) {
                 return e(r(t), n, r)
               })
         },
-        $e = function(e, t) {
+        ze = function(e, t) {
           var n = [],
             r = {}
           return (
@@ -2402,13 +2427,13 @@
           )
         },
         Je = {
-          getNodesMatching: $e,
+          getNodesMatching: ze,
           getVisibleNodes: function(e, t, n) {
-            return $e(e, function(e, r, o) {
-              return n && e._children && e._children.length && !0 !== e.expanded && ze(e, o, t), !e.hide
+            return ze(e, function(e, r, o) {
+              return n && e._children && e._children.length && !0 !== e.expanded && $e(e, o, t), !e.hide
             })
           },
-          markSubTreeVisited: ze,
+          markSubTreeVisited: $e,
         },
         Ze = (function() {
           return function(e, t) {
@@ -2572,7 +2597,7 @@
             return n && e(t.prototype, n), r && e(t, r), t
           }
         })()
-      var bt = (function() {
+      var yt = (function() {
           function e(t) {
             var n = t.data,
               r = t.mode,
@@ -2836,7 +2861,7 @@
             e
           )
         })(),
-        yt =
+        bt =
           Object.assign ||
           function(e) {
             for (var t = 1; t < arguments.length; t++) {
@@ -2885,7 +2910,7 @@
                   a = e.showDropdown,
                   i = e.showPartiallySelected,
                   l = e.searchPredicate
-                n.treeManager = new bt({
+                n.treeManager = new yt({
                   data: t,
                   mode: o,
                   showPartiallySelected: i,
@@ -2895,7 +2920,7 @@
                 var s = n.state.currentFocus && n.treeManager.getNodeById(n.state.currentFocus)
                 s && (s._focused = !0),
                   n.setState(function(e) {
-                    return yt(
+                    return bt(
                       { showDropdown: /initial|always/.test(a) || !0 === e.showDropdown, customOptions: r },
                       n.treeManager.getTreeAndTags()
                     )
@@ -2916,7 +2941,7 @@
                         ? document.addEventListener('click', n.handleOutsideClick, !1)
                         : document.removeEventListener('click', n.handleOutsideClick, !1)),
                     t ? n.props.onFocus() : n.props.onBlur(),
-                    t ? { showDropdown: t } : yt({ showDropdown: t }, n.resetSearchState())
+                    t ? { showDropdown: t } : bt({ showDropdown: t }, n.resetSearchState())
                   )
                 }, t)
               }),
@@ -2954,13 +2979,13 @@
                     })(t || []),
                     [e]
                   )
-                n.setState(yt({ customOptions: r }, n.resetSearchState()), n.onCustomChangeCallback(r))
+                n.setState(bt({ customOptions: r }, n.resetSearchState()), n.onCustomChangeCallback(r))
               }),
               (n.onCustomChangeCallback = function(e) {
                 ;(0, n.props.onCustomOptionChange)(e)
               }),
               (n.clearSearch = function() {
-                n.setState(yt({}, n.resetSearchState()))
+                n.setState(bt({}, n.resetSearchState()))
               }),
               (n.prepareTagData = function(e, t) {
                 return e.map(function(e) {
@@ -3052,10 +3077,10 @@
                 var e = n.props,
                   t = e.mode,
                   r = e.texts
-                return 'radioSelect' !== t ? {} : yt({ role: 'radiogroup' }, m(r.label))
+                return 'radioSelect' !== t ? {} : bt({ role: 'radiogroup' }, m(r.label))
               }),
               (n.state = { searchModeOn: !1, currentFocus: void 0, searchTerm: null }),
-              (n.clientId = e.id || y.get(n)),
+              (n.clientId = e.id || b.get(n)),
               (n.onCustomOptionRemove = n.onCustomOptionRemove.bind(n)),
               (n.onCustomOptionCreate = n.onCustomOptionCreate.bind(n)),
               (n.clearSearch = n.clearSearch.bind(n)),
@@ -3113,9 +3138,9 @@
                     h = c.currentFocus,
                     d = c.tags,
                     f = c.customOptions,
-                    b = c.searchModeOn,
-                    y = c.searchTerm,
-                    g = i && b,
+                    y = c.searchModeOn,
+                    b = c.searchTerm,
+                    g = i && y,
                     v = {
                       disabled: n,
                       readOnly: r,
@@ -3147,13 +3172,18 @@
                         { className: 'tag-container' },
                         p.a.createElement(
                           Ie,
-                          yt(
+                          bt(
                             { tags: d, onTagUpdate: l, onTagRemove: this.onTagRemove, treeManager: this.treeManager },
                             v
                           )
                         ),
                         i &&
-                          p.a.createElement(Be, { customOptions: f, onCustomOptionRemove: this.onCustomOptionRemove })
+                          p.a.createElement(Be, {
+                            tags: d,
+                            customOptions: f,
+                            onCustomOptionRemove: this.onCustomOptionRemove,
+                            texts: a,
+                          })
                       ),
                       p.a.createElement(
                         'div',
@@ -3163,10 +3193,10 @@
                           { className: 'search-with-options' },
                           p.a.createElement(
                             V,
-                            yt({ onTrigger: this.onTrigger, showDropdown: u }, v, { tags: d }),
+                            bt({ onTrigger: this.onTrigger, showDropdown: u }, v, { tags: d }),
                             p.a.createElement(
                               T,
-                              yt(
+                              bt(
                                 {
                                   inputRef: function(t) {
                                     e.searchInput = t
@@ -3177,18 +3207,18 @@
                                   onBlur: this.onInputBlur,
                                   onKeyDown: this.onKeyboardKeyDown,
                                   clearSearch: this.clearSearch,
-                                  searchModeOn: b,
+                                  searchModeOn: y,
                                 },
                                 v
                               )
                             )
                           ),
-                          g && p.a.createElement(Ye, { searchTerm: y, onCustomOptionCreate: this.onCustomOptionCreate })
+                          g && p.a.createElement(Ye, { searchTerm: b, onCustomOptionCreate: this.onCustomOptionCreate })
                         ),
                         u &&
                           p.a.createElement(
                             'div',
-                            yt({ className: 'dropdown-content' }, this.getAriaAttributes()),
+                            bt({ className: 'dropdown-content' }, this.getAriaAttributes()),
                             this.state.allNodesHidden
                               ? p.a.createElement(
                                   'span',
@@ -3197,7 +3227,7 @@
                                 )
                               : p.a.createElement(
                                   Ne,
-                                  yt(
+                                  bt(
                                     {
                                       data: this.state.tree,
                                       keepTreeOnSearch: this.props.keepTreeOnSearch,
@@ -3239,6 +3269,8 @@
           noMatches: c.a.string,
           label: c.a.string,
           labelRemove: c.a.string,
+          customOptionsPlaceholderTitle: c.a.string,
+          customOptionsPlaceholderSubtitle: c.a.string,
         }),
         showDropdown: c.a.oneOf(['default', 'initial', 'always']),
         className: c.a.string,
