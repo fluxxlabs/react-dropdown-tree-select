@@ -59,6 +59,7 @@ class DropdownTreeSelect extends Component {
     onTagUpdate: PropTypes.func,
     focusSearchInputOnMount: PropTypes.bool,
     disableParentSelect: PropTypes.bool,
+    customOptionsPlaceholder: PropTypes.func,
   }
 
   static defaultProps = {
@@ -335,7 +336,16 @@ class DropdownTreeSelect extends Component {
   }
 
   render() {
-    const { disabled, readOnly, mode, texts, allowCustomOptions, onTagUpdate, disableParentSelect } = this.props
+    const {
+      disabled,
+      readOnly,
+      mode,
+      texts,
+      allowCustomOptions,
+      onTagUpdate,
+      disableParentSelect,
+      customOptionsPlaceholder,
+    } = this.props
     const { showDropdown, currentFocus, tags, customOptions, searchModeOn, searchTerm } = this.state
 
     const activeDescendant = currentFocus ? `${currentFocus}_li` : undefined
@@ -371,7 +381,7 @@ class DropdownTreeSelect extends Component {
                 tags={tags}
                 customOptions={customOptions}
                 onCustomOptionRemove={this.onCustomOptionRemove}
-                texts={texts}
+                customOptionsPlaceholder={customOptionsPlaceholder}
               />
             )}
           </div>

@@ -3,18 +3,10 @@ import CustomOption from '../custom-option'
 
 class CustomOptions extends PureComponent {
   $emptyState() {
-    const {
-      tags,
-      texts: { customOptionsPlaceholderTitle, customOptionsPlaceholderSubtitle },
-    } = this.props
-    if (!tags.length) return null
+    const { tags, customOptionsPlaceholder } = this.props
+    if (!tags.length || !customOptionsPlaceholder) return null
 
-    return (
-      <div className="custom-options-placeholder">
-        <span className="custom-options-placeholder--title">{customOptionsPlaceholderTitle} </span>
-        <span className="custom-options-placeholder--subtitle">{customOptionsPlaceholderSubtitle}</span>
-      </div>
-    )
+    return customOptionsPlaceholder
   }
 
   render() {
