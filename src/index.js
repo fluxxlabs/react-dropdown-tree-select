@@ -57,6 +57,7 @@ class DropdownTreeSelect extends Component {
     onTagUpdate: PropTypes.func,
     focusSearchInputOnMount: PropTypes.bool,
     disableParentSelect: PropTypes.bool,
+    customOptionsPlaceholder: PropTypes.func,
   }
 
   static defaultProps = {
@@ -162,7 +163,8 @@ class DropdownTreeSelect extends Component {
       this.props.keepTreeOnSearch,
       this.props.keepChildrenOnSearch
     )
-    const searchModeOn = value.length > 0
+    const trimmedValue = value.trim()
+    const searchModeOn = trimmedValue.length > 0
 
     this.setState({
       tree,
@@ -280,8 +282,9 @@ class DropdownTreeSelect extends Component {
     const { showDropdown, searchModeOn, currentFocus } = this.state
     const tm = this.treeManager
     const tree = searchModeOn ? tm.matchTree : tm.tree
+    const searchInputValue = this.searchInput.value.trim()
 
-    if (allowCustomOptions && e.key === 'Enter' && this.searchInput.value.length > 1) {
+    if (allowCustomOptions && e.key === 'Enter' && searchInputValue.length > 1) {
       e.preventDefault()
       this.onCustomOptionCreate(this.searchInput.value)
     }
@@ -331,7 +334,16 @@ class DropdownTreeSelect extends Component {
   }
 
   render() {
-    const { disabled, readOnly, mode, texts, allowCustomOptions, onTagUpdate, disableParentSelect } = this.props
+    const {
+      disabled,
+      readOnly,
+      mode,
+      texts,
+      allowCustomOptions,
+      onTagUpdate,
+      disableParentSelect,
+      customOptionsPlaceholder,
+    } = this.props
     const { showDropdown, currentFocus, tags, customOptions, searchModeOn, searchTerm } = this.state
 
     const activeDescendant = currentFocus ? `${currentFocus}_li` : undefined
@@ -363,7 +375,12 @@ class DropdownTreeSelect extends Component {
               {...commonProps}
             />
             {allowCustomOptions && (
-              <CustomOptions customOptions={customOptions} onCustomOptionRemove={this.onCustomOptionRemove} />
+              <CustomOptions
+                tags={tags}
+                customOptions={customOptions}
+                onCustomOptionRemove={this.onCustomOptionRemove}
+                customOptionsPlaceholder={customOptionsPlaceholder}
+              />
             )}
           </div>
           <div className="bulk-select-body">
