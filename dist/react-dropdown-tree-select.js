@@ -810,9 +810,9 @@
         readOnly: c.a.bool,
         activeDescendant: c.a.string,
       }
-      var P = _,
-        T = n(6),
-        C = n.n(T),
+      var T = _,
+        C = n(6),
+        P = n.n(C),
         S = (function() {
           function e(e, t) {
             for (var n = 0; n < t.length; n++) {
@@ -831,7 +831,7 @@
         if (!e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
         return !t || ('object' != typeof t && 'function' != typeof t) ? e : t
       }
-      var x = l.a.bind(C.a),
+      var x = l.a.bind(P.a),
         j = function(e) {
           return e + '_tag'
         },
@@ -1618,10 +1618,10 @@
         return !t || ('object' != typeof t && 'function' != typeof t) ? e : t
       }
       var _e = l.a.bind(se.a),
-        Pe = function(e) {
+        Te = function(e) {
           return d(e)
         },
-        Te = (function(e) {
+        Ce = (function(e) {
           function t() {
             var e, n, r
             !(function(e, t) {
@@ -1690,8 +1690,8 @@
                     w = e.showPartiallySelected,
                     k = e.readOnly,
                     _ = e.clientId,
-                    P = e.disableParentSelect,
-                    T = (function(e) {
+                    T = e.disableParentSelect,
+                    C = (function(e) {
                       var t = e.keepTreeOnSearch,
                         n = e.keepChildrenOnSearch,
                         r = e._children,
@@ -1708,8 +1708,8 @@
                       return _e(
                         'node',
                         {
-                          leaf: Pe(r),
-                          tree: !Pe(r),
+                          leaf: Te(r),
+                          tree: !Te(r),
                           disabled: i,
                           hide: s,
                           'match-in-children': t && o,
@@ -1722,12 +1722,12 @@
                         c
                       )
                     })(this.props),
-                    C = n || !v ? { paddingLeft: 20 * (i || 0) + 'px' } : {},
+                    P = n || !v ? { paddingLeft: 20 * (i || 0) + 'px' } : {},
                     S = r + '_li'
                   return p.a.createElement(
                     'li',
-                    Oe({ className: T, style: C, id: S }, h(a), this.getAriaAttributes()),
-                    p.a.createElement(me, { isLeaf: Pe(o), expanded: l, id: r, onNodeToggle: m }),
+                    Oe({ className: C, style: P, id: S }, h(a), this.getAriaAttributes()),
+                    p.a.createElement(me, { isLeaf: Te(o), expanded: l, id: r, onNodeToggle: m }),
                     p.a.createElement(fe, {
                       title: s,
                       label: c,
@@ -1741,8 +1741,8 @@
                       showPartiallySelected: w,
                       readOnly: k,
                       clientId: _,
-                      disableParentSelect: P,
-                      isParent: !Pe(o),
+                      disableParentSelect: T,
+                      isParent: !Te(o),
                       onNodeToggle: m,
                     }),
                     p.a.createElement(Z, { actions: b, onAction: g, id: r, readOnly: k })
@@ -1753,7 +1753,7 @@
             t
           )
         })()
-      Te.propTypes = {
+      Ce.propTypes = {
         _id: c.a.string.isRequired,
         _depth: c.a.number,
         _children: c.a.array,
@@ -1778,7 +1778,7 @@
         readOnly: c.a.bool,
         clientId: c.a.string,
       }
-      var Ce = Te,
+      var Pe = Ce,
         Se =
           Object.assign ||
           function(e) {
@@ -1935,7 +1935,7 @@
                   })(e, o, t) &&
                     b.push(
                       p.a.createElement(
-                        Ce,
+                        Pe,
                         Se({ keepTreeOnSearch: n, keepChildrenOnSearch: r, key: e._id }, e, {
                           searchModeOn: o,
                           onChange: c,
@@ -3187,7 +3187,7 @@
                             V,
                             bt({ onTrigger: this.onTrigger, showDropdown: h }, m, { tags: f }),
                             p.a.createElement(
-                              P,
+                              T,
                               bt(
                                 {
                                   inputRef: function(t) {
@@ -3261,8 +3261,6 @@
           noMatches: c.a.string,
           label: c.a.string,
           labelRemove: c.a.string,
-          customOptionsPlaceholderTitle: c.a.string,
-          customOptionsPlaceholderSubtitle: c.a.string,
         }),
         showDropdown: c.a.oneOf(['default', 'initial', 'always']),
         className: c.a.string,

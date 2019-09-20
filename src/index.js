@@ -39,8 +39,6 @@ class DropdownTreeSelect extends Component {
       noMatches: PropTypes.string,
       label: PropTypes.string,
       labelRemove: PropTypes.string,
-      customOptionsPlaceholderTitle: PropTypes.string,
-      customOptionsPlaceholderSubtitle: PropTypes.string,
     }),
     showDropdown: PropTypes.oneOf(['default', 'initial', 'always']),
     className: PropTypes.string,
