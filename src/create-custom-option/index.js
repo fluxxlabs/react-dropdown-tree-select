@@ -15,7 +15,7 @@ class CreateCustomOption extends PureComponent {
   render() {
     const { searchTerm } = this.props
     return (
-      <div className="create-custom-option">
+      <div className="create-custom-option" tabIndex="-1">
         <button
           id="add-custom-option"
           className="add-custom-option-btn"

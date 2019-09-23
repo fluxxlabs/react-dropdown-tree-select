@@ -278,23 +278,24 @@ class DropdownTreeSelect extends Component {
   }
 
   onKeyboardKeyDown = e => {
-    const { readOnly, mode, allowCustomOptions } = this.props
-    const { showDropdown, searchModeOn, currentFocus } = this.state
-    const tm = this.treeManager
-    const tree = searchModeOn ? tm.matchTree : tm.tree
+    const { allowCustomOptions } = this.props
     const searchInputValue = this.searchInput.value.trim()
 
     if (allowCustomOptions && e.key === 'Enter' && searchInputValue.length > 1) {
       e.preventDefault()
       this.onCustomOptionCreate(this.searchInput.value)
+    } else {
+      return
     }
+  }
 
-    if (!showDropdown && (keyboardNavigation.isValidKey(e.key, false) || /^\w$/i.test(e.key))) {
-      // Triggers open of dropdown and retriggers event
-      e.persist()
-      this.handleClick(null, () => this.onKeyboardKeyDown(e))
-      if (/\w/i.test(e.key)) return
-    } else if (showDropdown && keyboardNavigation.isValidKey(e.key, true)) {
+  onTreeNavKeyDown = e => {
+    const { readOnly, mode } = this.props
+    const { showDropdown, searchModeOn, currentFocus } = this.state
+    const tm = this.treeManager
+    const tree = searchModeOn ? tm.matchTree : tm.tree
+
+    if (showDropdown && keyboardNavigation.isValidKey(e.key, true)) {
       const newFocus = tm.handleNavigationKey(
         currentFocus,
         tree,
@@ -384,7 +385,7 @@ class DropdownTreeSelect extends Component {
             )}
           </div>
           <div className="bulk-select-body">
-            <div className="search-with-options">
+            <div className="search-with-options" tabIndex="0">
               <Trigger onTrigger={this.onTrigger} showDropdown={showDropdown} {...commonProps} tags={tags}>
                 <Input
                   inputRef={el => {
@@ -405,7 +406,12 @@ class DropdownTreeSelect extends Component {
               )}
             </div>
             {showDropdown && (
-              <div className="dropdown-content" {...this.getAriaAttributes()}>
+              <div
+                className="dropdown-content"
+                tabIndex="0"
+                onKeyDown={this.onTreeNavKeyDown}
+                {...this.getAriaAttributes()}
+              >
                 {this.state.allNodesHidden ? (
                   <span className="no-matches">{texts.noMatches || 'No matches found'}</span>
                 ) : (
