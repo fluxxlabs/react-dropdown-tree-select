@@ -17,7 +17,7 @@ class CustomOption extends PureComponent {
 
     return (
       <li className="custom-option tag-item">
-        "{option}"
+        <span className="tag-text custom-option-tag-text">"{option}"</span>
         <button className="clear-custom-option-btn" type="button" aria-label="clear option" onClick={this.handleClick}>
           &#10005;
         </button>

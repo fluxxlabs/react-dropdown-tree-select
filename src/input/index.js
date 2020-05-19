@@ -46,8 +46,6 @@ class Input extends PureComponent {
         </button>
       )
     }
-
-    return <span className="search-icon">&#9906;</span>
   }
 
   render() {
