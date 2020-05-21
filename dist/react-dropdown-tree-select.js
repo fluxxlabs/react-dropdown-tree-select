@@ -173,13 +173,10 @@
                   !(function(e, t) {
                     if (!(e instanceof t)) throw new TypeError('Cannot call a class as a function')
                   })(this, t),
-                    a(Object.getPrototypeOf(t.prototype), 'constructor', this).call(this),
-                    (this.state = {
-                      showLoader: !1,
-                      lastScrollTop: 0,
-                      actionTriggered: !1,
-                      pullToRefreshThresholdBreached: !1,
-                    }),
+                    a(Object.getPrototypeOf(t.prototype), 'constructor', this).call(this, e),
+                    (this.lastScrollTop = 0),
+                    (this.actionTriggered = !1),
+                    (this.state = { showLoader: !1, pullToRefreshThresholdBreached: !1 }),
                     (this.startY = 0),
                     (this.currentY = 0),
                     (this.dragging = !1),
@@ -244,7 +241,8 @@
                       key: 'componentWillReceiveProps',
                       value: function(e) {
                         ;(this.props.key === e.key && this.props.dataLength === e.dataLength) ||
-                          this.setState({ showLoader: !1, actionTriggered: !1, pullToRefreshThresholdBreached: !1 })
+                          ((this.actionTriggered = !1),
+                          this.setState({ showLoader: !1, pullToRefreshThresholdBreached: !1 }))
                       },
                     },
                     {
@@ -264,7 +262,7 @@
                     {
                       key: 'onStart',
                       value: function(e) {
-                        this.state.lastScrollTop ||
+                        this.lastScrollTop ||
                           ((this.dragging = !0),
                           (this.startY = e.pageY || e.touches[0].pageY),
                           (this.currentY = this.startY),
@@ -332,11 +330,11 @@
                             : document.documentElement.scrollTop
                             ? document.documentElement
                             : document.body
-                        this.state.actionTriggered ||
+                        this.actionTriggered ||
                           (this.isElementAtBottom(n, this.props.scrollThreshold) &&
                             this.props.hasMore &&
-                            (this.setState({ actionTriggered: !0, showLoader: !0 }), this.props.next()),
-                          this.setState({ lastScrollTop: n.scrollTop }))
+                            ((this.actionTriggered = !0), this.setState({ showLoader: !0 }), this.props.next()),
+                          (this.lastScrollTop = n.scrollTop))
                       },
                     },
                     {
@@ -380,8 +378,9 @@
                                       top: -1 * this.maxPullDownDistance,
                                     },
                                   },
-                                  !this.state.pullToRefreshThresholdBreached && this.props.pullDownToRefreshContent,
-                                  this.state.pullToRefreshThresholdBreached && this.props.releaseToRefreshContent
+                                  this.state.pullToRefreshThresholdBreached
+                                    ? this.props.releaseToRefreshContent
+                                    : this.props.pullDownToRefreshContent
                                 )
                               ),
                             this.props.children,
@@ -705,8 +704,8 @@
             return n && e(t.prototype, n), r && e(t, r), t
           }
         })()
-      var k = l.a.bind(v.a),
-        _ = (function(e) {
+      var T = l.a.bind(v.a),
+        k = (function(e) {
           function t(e) {
             !(function(e, t) {
               if (!(e instanceof t)) throw new TypeError('Cannot call a class as a function')
@@ -740,19 +739,18 @@
                 value: function() {
                   var e = this.props,
                     t = e.clearSearch
-                  return e.searchModeOn
-                    ? p.a.createElement(
-                        'button',
-                        {
-                          id: 'clear-search',
-                          onClick: t,
-                          className: 'clear-search-btn',
-                          type: 'button',
-                          'aria-label': 'clear-search-button',
-                        },
-                        '✕'
-                      )
-                    : p.a.createElement('span', { className: 'search-icon' }, '⚲')
+                  if (e.searchModeOn)
+                    return p.a.createElement(
+                      'button',
+                      {
+                        id: 'clear-search',
+                        onClick: t,
+                        className: 'clear-search-btn',
+                        type: 'button',
+                        'aria-label': 'clear-search-button',
+                      },
+                      '✕'
+                    )
                 },
               },
               {
@@ -778,7 +776,7 @@
                           type: 'text',
                           disabled: i,
                           ref: t,
-                          className: k('search'),
+                          className: T('search'),
                           placeholder: r.placeholder || 'Choose...',
                           onKeyDown: s,
                           onChange: this.handleInputChange,
@@ -799,7 +797,7 @@
             t
           )
         })()
-      _.propTypes = {
+      k.propTypes = {
         texts: c.a.object,
         onInputChange: c.a.func,
         onFocus: c.a.func,
@@ -810,9 +808,9 @@
         readOnly: c.a.bool,
         activeDescendant: c.a.string,
       }
-      var T = _,
-        P = n(6),
-        C = n.n(P),
+      var _ = k,
+        C = n(6),
+        P = n.n(C),
         S = (function() {
           function e(e, t) {
             for (var n = 0; n < t.length; n++) {
@@ -831,11 +829,11 @@
         if (!e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
         return !t || ('object' != typeof t && 'function' != typeof t) ? e : t
       }
-      var x = l.a.bind(C.a),
-        j = function(e) {
+      var x = l.a.bind(P.a),
+        N = function(e) {
           return e + '_tag'
         },
-        N = (function(e) {
+        j = (function(e) {
           function t() {
             var e, n, r
             !(function(e, t) {
@@ -880,7 +878,7 @@
                     a = e.readOnly,
                     i = e.disabled,
                     l = e.parentLabel,
-                    s = j(t),
+                    s = N(t),
                     c = t + '_button',
                     u = x('tag-remove', { readOnly: a }, { disabled: i }),
                     h = a || i,
@@ -888,7 +886,7 @@
                   return p.a.createElement(
                     'span',
                     { className: x('tag'), id: s, 'aria-label': n },
-                    d,
+                    p.a.createElement('span', { className: 'tag-text' }, d),
                     p.a.createElement(
                       'button',
                       {
@@ -911,7 +909,7 @@
             t
           )
         })()
-      N.propTypes = {
+      j.propTypes = {
         id: c.a.string.isRequired,
         label: c.a.string.isRequired,
         parentLabel: c.a.string,
@@ -920,9 +918,9 @@
         disabled: c.a.bool,
         labelRemove: c.a.string,
       }
-      var D = N,
-        R = n(4),
-        I = n.n(R),
+      var D = j,
+        I = n(4),
+        R = n.n(I),
         M =
           Object.assign ||
           function(e) {
@@ -950,7 +948,7 @@
         if (!e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
         return !t || ('object' != typeof t && 'function' != typeof t) ? e : t
       }
-      var L = l.a.bind(I.a),
+      var L = l.a.bind(R.a),
         B = (function(e) {
           function t() {
             var e, n, r
@@ -976,7 +974,7 @@
                     l.length &&
                     (u['aria-label'] && c.push(s),
                     l.forEach(function(e) {
-                      c.push(j(e._id))
+                      c.push(N(e._id))
                     }),
                     (u = m(o.label, c.join(' ')))),
                   M(
@@ -1122,8 +1120,8 @@
         readOnly: c.a.bool,
       }),
         (U.defaultProps = { onAction: function() {} })
-      var W = U,
-        $ =
+      var $ = U,
+        W =
           Object.assign ||
           function(e) {
             for (var t = 1; t < arguments.length; t++) {
@@ -1184,8 +1182,8 @@
                   : t.map(function(e, t) {
                       var o = e.id || 'action-' + t
                       return p.a.createElement(
-                        W,
-                        $({ key: o }, r, e, { actionData: { action: $({}, e, { id: o }), nodeId: n } })
+                        $,
+                        W({ key: o }, r, e, { actionData: { action: W({}, e, { id: o }), nodeId: n } })
                       )
                     })
               },
@@ -1613,15 +1611,15 @@
             return n && e(t.prototype, n), r && e(t, r), t
           }
         })()
-      function ke(e, t) {
+      function Te(e, t) {
         if (!e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
         return !t || ('object' != typeof t && 'function' != typeof t) ? e : t
       }
-      var _e = l.a.bind(se.a),
-        Te = function(e) {
+      var ke = l.a.bind(se.a),
+        _e = function(e) {
           return d(e)
         },
-        Pe = (function(e) {
+        Ce = (function(e) {
           function t() {
             var e, n, r
             !(function(e, t) {
@@ -1629,7 +1627,7 @@
             })(this, t)
             for (var o = arguments.length, a = Array(o), i = 0; i < o; i++) a[i] = arguments[i]
             return (
-              (n = r = ke(this, (e = t.__proto__ || Object.getPrototypeOf(t)).call.apply(e, [this].concat(a)))),
+              (n = r = Te(this, (e = t.__proto__ || Object.getPrototypeOf(t)).call.apply(e, [this].concat(a)))),
               (r.getAriaAttributes = function() {
                 var e = r.props,
                   t = e._children,
@@ -1652,7 +1650,7 @@
                   u
                 )
               }),
-              ke(r, n)
+              Te(r, n)
             )
           }
           return (
@@ -1688,10 +1686,10 @@
                     m = e.onNodeToggle,
                     O = e.onCheckboxChange,
                     w = e.showPartiallySelected,
-                    k = e.readOnly,
-                    _ = e.clientId,
-                    T = e.disableParentSelect,
-                    P = (function(e) {
+                    T = e.readOnly,
+                    k = e.clientId,
+                    _ = e.disableParentSelect,
+                    C = (function(e) {
                       var t = e.keepTreeOnSearch,
                         n = e.keepChildrenOnSearch,
                         r = e._children,
@@ -1705,11 +1703,11 @@
                         p = e.readOnly,
                         h = e.checked,
                         d = e._focused
-                      return _e(
+                      return ke(
                         'node',
                         {
-                          leaf: Te(r),
-                          tree: !Te(r),
+                          leaf: _e(r),
+                          tree: !_e(r),
                           disabled: i,
                           hide: s,
                           'match-in-children': t && o,
@@ -1722,12 +1720,12 @@
                         c
                       )
                     })(this.props),
-                    C = n || !v ? { paddingLeft: 20 * (i || 0) + 'px' } : {},
+                    P = n || !v ? { paddingLeft: 20 * (i || 0) + 'px' } : {},
                     S = r + '_li'
                   return p.a.createElement(
                     'li',
-                    Oe({ className: P, style: C, id: S }, h(a), this.getAriaAttributes()),
-                    p.a.createElement(me, { isLeaf: Te(o), expanded: l, id: r, onNodeToggle: m }),
+                    Oe({ className: C, style: P, id: S }, h(a), this.getAriaAttributes()),
+                    p.a.createElement(me, { isLeaf: _e(o), expanded: l, id: r, onNodeToggle: m }),
                     p.a.createElement(fe, {
                       title: s,
                       label: c,
@@ -1739,13 +1737,13 @@
                       mode: t,
                       onCheckboxChange: O,
                       showPartiallySelected: w,
-                      readOnly: k,
-                      clientId: _,
-                      disableParentSelect: T,
-                      isParent: !Te(o),
+                      readOnly: T,
+                      clientId: k,
+                      disableParentSelect: _,
+                      isParent: !_e(o),
                       onNodeToggle: m,
                     }),
-                    p.a.createElement(Z, { actions: y, onAction: g, id: r, readOnly: k })
+                    p.a.createElement(Z, { actions: y, onAction: g, id: r, readOnly: T })
                   )
                 },
               },
@@ -1753,7 +1751,7 @@
             t
           )
         })()
-      Pe.propTypes = {
+      Ce.propTypes = {
         _id: c.a.string.isRequired,
         _depth: c.a.number,
         _children: c.a.array,
@@ -1778,7 +1776,7 @@
         readOnly: c.a.bool,
         clientId: c.a.string,
       }
-      var Ce = Pe,
+      var Pe = Ce,
         Se =
           Object.assign ||
           function(e) {
@@ -1812,7 +1810,7 @@
             return !t || ('object' != typeof t && 'function' != typeof t) ? e : t
           })(this, (t.__proto__ || Object.getPrototypeOf(t)).call(this, e))
           return (
-            je.call(n),
+            Ne.call(n),
             (n.currentPage = 1),
             n.computeInstanceProps(e, !0),
             (n.state = { items: n.allVisibleNodes.slice(0, n.props.pageSize) }),
@@ -1879,7 +1877,7 @@
         activeDescendant: c.a.string,
       }),
         (xe.defaultProps = { pageSize: 100 })
-      var je = function() {
+      var Ne = function() {
           var e = this
           ;(this.componentWillReceiveProps = function(t) {
             var n = t.activeDescendant,
@@ -1936,7 +1934,7 @@
                   })(e, o, t) &&
                     y.push(
                       p.a.createElement(
-                        Ce,
+                        Pe,
                         Se({ keepTreeOnSearch: n, keepChildrenOnSearch: r, key: e._id }, e, {
                           searchModeOn: o,
                           onChange: c,
@@ -1975,7 +1973,7 @@
               }
             })
         },
-        Ne = xe,
+        je = xe,
         De = (function() {
           function e(e, t) {
             for (var n = 0; n < t.length; n++) {
@@ -1990,7 +1988,7 @@
             return n && e(t.prototype, n), r && e(t, r), t
           }
         })(),
-        Re =
+        Ie =
           Object.assign ||
           function(e) {
             for (var t = 1; t < arguments.length; t++) {
@@ -1999,7 +1997,7 @@
             }
             return e
           }
-      var Ie = (function(e) {
+      var Re = (function(e) {
         function t() {
           return (
             (function(e, t) {
@@ -2054,7 +2052,7 @@
                         s = e.parentLabel
                       return p.a.createElement(
                         'li',
-                        Re({ className: 'tag-item', key: 'tag-item-' + a }, h(l)),
+                        Ie({ className: 'tag-item', key: 'tag-item-' + a }, h(l)),
                         p.a.createElement(D, {
                           label: i,
                           parentLabel: s,
@@ -2074,14 +2072,14 @@
           t
         )
       })()
-      Ie.propTypes = {
+      Re.propTypes = {
         tags: c.a.array,
         texts: c.a.object,
         onTagRemove: c.a.func,
         disabled: c.a.bool,
         readOnly: c.a.bool,
       }
-      var Me = Ie,
+      var Me = Re,
         Ae = (function() {
           function e(e, t) {
             for (var n = 0; n < t.length; n++) {
@@ -2133,9 +2131,7 @@
                   return p.a.createElement(
                     'li',
                     { className: 'custom-option tag-item' },
-                    '"',
-                    e,
-                    '"',
+                    p.a.createElement('span', { className: 'tag-text custom-option-tag-text' }, '"', e, '"'),
                     p.a.createElement(
                       'button',
                       {
@@ -2315,7 +2311,7 @@
             })
           )
         }
-      var We = function(e) {
+      var $e = function(e) {
           var t = e.tree,
             n = e.simple,
             r = e.radio,
@@ -2401,7 +2397,7 @@
             rootPrefixId: i,
           })
         },
-        $e = function e(t, n, r) {
+        We = function e(t, n, r) {
           ;(n[t._id] = !0),
             d(t._children) ||
               t._children.forEach(function(t) {
@@ -2422,10 +2418,10 @@
           getNodesMatching: ze,
           getVisibleNodes: function(e, t, n) {
             return ze(e, function(e, r, o) {
-              return n && e._children && e._children.length && !0 !== e.expanded && $e(e, o, t), !e.hide
+              return n && e._children && e._children.length && !0 !== e.expanded && We(e, o, t), !e.hide
             })
           },
-          markSubTreeVisited: $e,
+          markSubTreeVisited: We,
         },
         Ze = (function() {
           return function(e, t) {
@@ -2558,7 +2554,7 @@
               })
             if (o < 0 || !n.length) return r
             var a = n[(o = n.length > o ? o : n.length - 1)]._id,
-              i = document.getElementById(j(a))
+              i = document.getElementById(N(a))
             return (i && i.firstElementChild) || r
           },
           handleFocusNavigationkey: function(e, t, n, r, o) {
@@ -2604,7 +2600,7 @@
               (this.radioSelect = 'radioSelect' === r),
               (this.hierarchical = 'hierarchical' === r),
               (this.searchPredicate = i)
-            var l = We({
+            var l = $e({
                 tree: JSON.parse(JSON.stringify(n)),
                 simple: this.simpleSelect,
                 radio: this.radioSelect,
@@ -2884,7 +2880,7 @@
        * license MIT
        * see https://github.com/dowjones/react-dropdown-tree-select
        */
-      var vt = l.a.bind(I.a),
+      var vt = l.a.bind(R.a),
         mt = (function(e) {
           function t(e) {
             !(function(e, t) {
@@ -2901,7 +2897,8 @@
                   o = e.mode,
                   a = e.showDropdown,
                   i = e.showPartiallySelected,
-                  l = e.searchPredicate
+                  l = e.searchPredicate,
+                  s = e.enableTreeVisibilityToggle
                 n.treeManager = new bt({
                   data: t,
                   mode: o,
@@ -2909,13 +2906,23 @@
                   rootPrefixId: n.clientId,
                   searchPredicate: l,
                 })
-                var s = n.state.currentFocus && n.treeManager.getNodeById(n.state.currentFocus)
-                s && (s._focused = !0),
+                var c = n.state.currentFocus && n.treeManager.getNodeById(n.state.currentFocus)
+                c && (c._focused = !0),
                   n.setState(function(e) {
                     return yt(
-                      { showDropdown: /initial|always/.test(a) || !0 === e.showDropdown, customOptions: r },
+                      {
+                        showDropdown: /initial|always/.test(a) || !0 === e.showDropdown,
+                        hideTree: s,
+                        customOptions: r,
+                      },
                       n.treeManager.getTreeAndTags()
                     )
+                  })
+              }),
+              (n.toggleTreeVisibility = function(e) {
+                e.preventDefault(),
+                  n.setState(function(e) {
+                    return { hideTree: !e.hideTree }
                   })
               }),
               (n.resetSearchState = function() {
@@ -3104,6 +3111,77 @@
                 },
               },
               {
+                key: '$tagContainer',
+                value: function() {
+                  var e = this.props,
+                    t = e.disabled,
+                    n = e.readOnly,
+                    r = e.mode,
+                    o = e.texts,
+                    a = e.allowCustomOptions,
+                    i = e.onTagUpdate,
+                    l = e.customOptionsPlaceholder,
+                    s = e.emptyStatePlaceholder,
+                    c = this.state,
+                    u = c.tags,
+                    h = c.customOptions,
+                    d = { disabled: t, readOnly: n, texts: o, mode: r, clientId: this.clientId }
+                  return !((!!u && u.length) || (!!h && h.length)) && s
+                    ? p.a.createElement('div', { className: 'tag-container' }, s)
+                    : p.a.createElement(
+                        'div',
+                        { className: 'tag-container' },
+                        p.a.createElement(
+                          Me,
+                          yt(
+                            { tags: u, onTagUpdate: i, onTagRemove: this.onTagRemove, treeManager: this.treeManager },
+                            d
+                          )
+                        ),
+                        a &&
+                          p.a.createElement(Be, {
+                            tags: u,
+                            customOptions: h,
+                            onCustomOptionRemove: this.onCustomOptionRemove,
+                            customOptionsPlaceholder: l,
+                          })
+                      )
+                },
+              },
+              {
+                key: '$visibilityToggle',
+                value: function() {
+                  var e = this.state,
+                    t = e.hideTree,
+                    n = e.searchModeOn,
+                    r = this.props,
+                    o = r.enableTreeVisibilityToggle,
+                    a = r.texts,
+                    i = a.visibilityShowText,
+                    l = void 0 === i ? 'Show' : i,
+                    s = a.visibilityHideText,
+                    c = void 0 === s ? 'Hide' : s,
+                    u = r.visibilityHelpTooltip
+                  if (!o || n) return null
+                  var h = t ? l : c
+                  return p.a.createElement(
+                    'div',
+                    { className: 'tree-visibility-toggle' },
+                    p.a.createElement(
+                      'button',
+                      {
+                        className: 'tree-visibility-toggle--btn',
+                        type: 'button',
+                        'aria-label': 'toggle visibility',
+                        onClick: this.toggleTreeVisibility,
+                      },
+                      h
+                    ),
+                    !!u && u
+                  )
+                },
+              },
+              {
                 key: 'render',
                 value: function() {
                   var e = this,
@@ -3113,21 +3191,20 @@
                     o = t.mode,
                     a = t.texts,
                     i = t.allowCustomOptions,
-                    l = t.onTagUpdate,
-                    s = t.disableParentSelect,
-                    c = t.customOptionsPlaceholder,
-                    u = this.state,
-                    h = u.showDropdown,
-                    d = u.currentFocus,
-                    f = u.tags,
-                    b = u.customOptions,
-                    y = u.searchModeOn,
-                    g = u.searchTerm,
-                    v = i && y,
-                    m = {
+                    l = t.disableParentSelect,
+                    s = this.state,
+                    c = s.showDropdown,
+                    u = s.currentFocus,
+                    h = s.tags,
+                    d = s.customOptions,
+                    f = s.searchModeOn,
+                    b = s.searchTerm,
+                    y = i && f,
+                    g = s.hideTree && !f ? 'tree-hidden' : 'tree-visible',
+                    v = {
                       disabled: n,
                       readOnly: r,
-                      activeDescendant: d ? d + '_li' : void 0,
+                      activeDescendant: u ? u + '_li' : void 0,
                       texts: a,
                       mode: o,
                       clientId: this.clientId,
@@ -3150,24 +3227,7 @@
                           { 'radio-select': 'radioSelect' === o }
                         ),
                       },
-                      p.a.createElement(
-                        'div',
-                        { className: 'tag-container' },
-                        p.a.createElement(
-                          Me,
-                          yt(
-                            { tags: f, onTagUpdate: l, onTagRemove: this.onTagRemove, treeManager: this.treeManager },
-                            m
-                          )
-                        ),
-                        i &&
-                          p.a.createElement(Be, {
-                            tags: f,
-                            customOptions: b,
-                            onCustomOptionRemove: this.onCustomOptionRemove,
-                            customOptionsPlaceholder: c,
-                          })
-                      ),
+                      this.$tagContainer(),
                       p.a.createElement(
                         'div',
                         { className: 'bulk-select-body' },
@@ -3176,33 +3236,34 @@
                           { className: 'search-with-options', tabIndex: '0' },
                           p.a.createElement(
                             V,
-                            yt({ onTrigger: this.onTrigger, showDropdown: h }, m, { tags: f }),
+                            yt({ onTrigger: this.onTrigger, showDropdown: c }, v, { tags: h }),
                             p.a.createElement(
-                              T,
+                              _,
                               yt(
                                 {
                                   inputRef: function(t) {
                                     e.searchInput = t
                                   },
-                                  tags: f,
+                                  tags: h,
                                   onInputChange: this.onInputChange,
                                   onFocus: this.onInputFocus,
                                   onBlur: this.onInputBlur,
                                   onKeyDown: this.onKeyboardKeyDown,
                                   clearSearch: this.clearSearch,
-                                  searchModeOn: y,
+                                  searchModeOn: f,
                                 },
-                                m
+                                v
                               )
                             )
                           ),
-                          v && p.a.createElement(Ye, { searchTerm: g, onCustomOptionCreate: this.onCustomOptionCreate })
+                          y && p.a.createElement(Ye, { searchTerm: b, onCustomOptionCreate: this.onCustomOptionCreate })
                         ),
-                        h &&
+                        this.$visibilityToggle(),
+                        c &&
                           p.a.createElement(
                             'div',
                             yt(
-                              { className: 'dropdown-content', tabIndex: '0', onKeyDown: this.onTreeNavKeyDown },
+                              { className: 'dropdown-content ' + g, tabIndex: '0', onKeyDown: this.onTreeNavKeyDown },
                               this.getAriaAttributes()
                             ),
                             this.state.allNodesHidden
@@ -3212,7 +3273,7 @@
                                   a.noMatches || 'No matches found'
                                 )
                               : p.a.createElement(
-                                  Ne,
+                                  je,
                                   yt(
                                     {
                                       data: this.state.tree,
@@ -3224,12 +3285,12 @@
                                       onNodeToggle: this.onNodeToggle,
                                       mode: o,
                                       showPartiallySelected: this.props.showPartiallySelected,
-                                      customOptions: b,
+                                      customOptions: d,
                                       onCustomOptionRemove: this.onCustomOptionRemove,
                                       onCustomOptionCreate: this.onCustomOptionCreate,
-                                      disableParentSelect: s,
+                                      disableParentSelect: l,
                                     },
-                                    m
+                                    v
                                   )
                                 )
                           )
@@ -3274,6 +3335,9 @@
         focusSearchInputOnMount: c.a.bool,
         disableParentSelect: c.a.bool,
         customOptionsPlaceholder: c.a.func,
+        emptyStatePlaceholder: c.a.func,
+        enableTreeVisibilityToggle: c.a.bool,
+        visibilityHelpTooltip: c.a.func,
       }),
         (mt.defaultProps = {
           onFocus: function() {},
@@ -3281,6 +3345,7 @@
           onChange: function() {},
           texts: {},
           showDropdown: 'default',
+          enableTreeVisibilityToggle: !1,
         })
       t.default = mt
     },

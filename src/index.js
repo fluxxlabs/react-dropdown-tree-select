@@ -58,6 +58,9 @@ class DropdownTreeSelect extends Component {
     focusSearchInputOnMount: PropTypes.bool,
     disableParentSelect: PropTypes.bool,
     customOptionsPlaceholder: PropTypes.func,
+    emptyStatePlaceholder: PropTypes.func,
+    enableTreeVisibilityToggle: PropTypes.bool,
+    visibilityHelpTooltip: PropTypes.func,
   }
 
   static defaultProps = {
@@ -66,6 +69,7 @@ class DropdownTreeSelect extends Component {
     onChange: () => {},
     texts: {},
     showDropdown: 'default',
+    enableTreeVisibilityToggle: false,
   }
 
   constructor(props) {
@@ -81,7 +85,15 @@ class DropdownTreeSelect extends Component {
     this.clearSearch = this.clearSearch.bind(this)
   }
 
-  initNewProps = ({ data, customOptions, mode, showDropdown, showPartiallySelected, searchPredicate }) => {
+  initNewProps = ({
+    data,
+    customOptions,
+    mode,
+    showDropdown,
+    showPartiallySelected,
+    searchPredicate,
+    enableTreeVisibilityToggle,
+  }) => {
     this.treeManager = new TreeManager({
       data,
       mode,
@@ -96,8 +108,17 @@ class DropdownTreeSelect extends Component {
     }
     this.setState(prevState => ({
       showDropdown: /initial|always/.test(showDropdown) || prevState.showDropdown === true,
+      hideTree: enableTreeVisibilityToggle,
       customOptions,
       ...this.treeManager.getTreeAndTags(),
+    }))
+  }
+
+  toggleTreeVisibility = ev => {
+    ev.preventDefault()
+
+    this.setState(prevState => ({
+      hideTree: !prevState.hideTree,
     }))
   }
 
@@ -334,7 +355,7 @@ class DropdownTreeSelect extends Component {
     }
   }
 
-  render() {
+  $tagContainer() {
     const {
       disabled,
       readOnly,
@@ -342,13 +363,70 @@ class DropdownTreeSelect extends Component {
       texts,
       allowCustomOptions,
       onTagUpdate,
-      disableParentSelect,
       customOptionsPlaceholder,
+      emptyStatePlaceholder,
     } = this.props
-    const { showDropdown, currentFocus, tags, customOptions, searchModeOn, searchTerm } = this.state
+    const { tags, customOptions } = this.state
+    const commonProps = { disabled, readOnly, texts, mode, clientId: this.clientId }
+
+    const valuesExist = (!!tags && tags.length) || (!!customOptions && customOptions.length)
+
+    if (!valuesExist && !!emptyStatePlaceholder) return <div className="tag-container">{emptyStatePlaceholder}</div>
+
+    return (
+      <div className="tag-container">
+        <Tags
+          tags={tags}
+          onTagUpdate={onTagUpdate}
+          onTagRemove={this.onTagRemove}
+          treeManager={this.treeManager}
+          {...commonProps}
+        />
+        {allowCustomOptions && (
+          <CustomOptions
+            tags={tags}
+            customOptions={customOptions}
+            onCustomOptionRemove={this.onCustomOptionRemove}
+            customOptionsPlaceholder={customOptionsPlaceholder}
+          />
+        )}
+      </div>
+    )
+  }
+
+  $visibilityToggle() {
+    const { hideTree, searchModeOn } = this.state
+    const {
+      enableTreeVisibilityToggle,
+      texts: { visibilityShowText = 'Show', visibilityHideText = 'Hide' },
+      visibilityHelpTooltip,
+    } = this.props
+    if (!enableTreeVisibilityToggle || searchModeOn) return null
+
+    const btnText = hideTree ? visibilityShowText : visibilityHideText
+
+    return (
+      <div className="tree-visibility-toggle">
+        <button
+          className="tree-visibility-toggle--btn"
+          type="button"
+          aria-label="toggle visibility"
+          onClick={this.toggleTreeVisibility}
+        >
+          {btnText}
+        </button>
+        {!!visibilityHelpTooltip && visibilityHelpTooltip}
+      </div>
+    )
+  }
+
+  render() {
+    const { disabled, readOnly, mode, texts, allowCustomOptions, disableParentSelect } = this.props
+    const { showDropdown, currentFocus, tags, customOptions, searchModeOn, searchTerm, hideTree } = this.state
 
     const activeDescendant = currentFocus ? `${currentFocus}_li` : undefined
     const showCustomOptionCreate = allowCustomOptions && searchModeOn
+    const treeVisibilityClass = hideTree && !searchModeOn ? 'tree-hidden' : 'tree-visible'
 
     const commonProps = { disabled, readOnly, activeDescendant, texts, mode, clientId: this.clientId }
 
@@ -367,23 +445,7 @@ class DropdownTreeSelect extends Component {
             { 'radio-select': mode === 'radioSelect' }
           )}
         >
-          <div className="tag-container">
-            <Tags
-              tags={tags}
-              onTagUpdate={onTagUpdate}
-              onTagRemove={this.onTagRemove}
-              treeManager={this.treeManager}
-              {...commonProps}
-            />
-            {allowCustomOptions && (
-              <CustomOptions
-                tags={tags}
-                customOptions={customOptions}
-                onCustomOptionRemove={this.onCustomOptionRemove}
-                customOptionsPlaceholder={customOptionsPlaceholder}
-              />
-            )}
-          </div>
+          {this.$tagContainer()}
           <div className="bulk-select-body">
             <div className="search-with-options" tabIndex="0">
               <Trigger onTrigger={this.onTrigger} showDropdown={showDropdown} {...commonProps} tags={tags}>
@@ -405,9 +467,10 @@ class DropdownTreeSelect extends Component {
                 <CreateCustomOption searchTerm={searchTerm} onCustomOptionCreate={this.onCustomOptionCreate} />
               )}
             </div>
+            {this.$visibilityToggle()}
             {showDropdown && (
               <div
-                className="dropdown-content"
+                className={`dropdown-content ${treeVisibilityClass}`}
                 tabIndex="0"
                 onKeyDown={this.onTreeNavKeyDown}
                 {...this.getAriaAttributes()}
